@@ -1,0 +1,202 @@
+openapi: 3.0.0
+info:
+  title: Hackathon API
+  description: API pour gérer les hackathons, les équipes et les membres.
+  version: "1.0.0"
+servers:
+  - url: http://localhost:8000/api
+paths:
+  /hackathon/all:
+    get:
+      summary: Retourne tous les hackathons
+      responses:
+        '200':
+          description: Une liste de tous les hackathons
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Hackathon'
+  /hackathon/active:
+    get:
+      summary: Retourne le hackathon actif
+      responses:
+        '200':
+          description: Détails du hackathon actif
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hackathon'
+  /hackathon/{idh}/equipe:
+    get:
+      summary: Retourne les équipes inscrites à un hackathon spécifique
+      parameters:
+        - name: idh
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Une liste des équipes pour le hackathon spécifié
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Equipe'
+  /membre/all:
+    get:
+      summary: Retourne tous les membres
+      responses:
+        '200':
+          description: Une liste de tous les membres
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Membre'
+  /membre/{idequipe}:
+    get:
+      summary: Retourne les membres d'une équipe spécifique
+      parameters:
+        - name: idequipe
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Une liste des membres pour l'équipe spécifiée
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Membre'
+  /equipe/all:
+    get:
+      summary: Retourne toutes les équipes
+      responses:
+        '200':
+          description: Une liste de toutes les équipes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Equipe'
+  /equipe/create:
+    post:
+      summary: Crée une nouvelle équipe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EquipeCreate'
+      responses:
+        '200':
+          description: L'équipe a été créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Equipe'
+  /equipe/auth:
+    post:
+      summary: Authentifie une équipe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EquipeAuth'
+      responses:
+        '200':
+          description: Authentification réussie, retourne un token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+  /equipe/{token}:
+    get:
+      summary: Retourne une équipe en fonction de son token
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Détails de l'équipe correspondant au token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Equipe'
+components:
+  schemas:
+    Hackathon:
+      type: object
+      properties:
+        idhackathon:
+          type: integer
+        thematique:
+          type: string
+        dateDebut:
+          type: string
+          format: date
+        dateFin:
+          type: string
+          format: date
+    Equipe:
+      type: object
+      properties:
+        idequipe:
+          type: integer
+        nomequipe:
+          type: string
+        lienprototype:
+          type: string
+        nbparticipants:
+          type: integer
+        login:
+          type: string
+        password:
+          type: string
+    Membre:
+      type: object
+      properties:
+        idmembre:
+          type: integer
+        nom:
+          type: string
+        prenom:
+          type: string
+        idequipe:
+          type: integer
+    EquipeCreate:
+      type: object
+      properties:
+        nomequipe:
+          type: string
+        lienprototype:
+          type: string
+        nbparticipants:
+          type: integer
+        login:
+          type: string
+        password:
+          type: string
+    EquipeAuth:
+      type: object
+      properties:
+        login:
+          type: string
+        password:
+          type: string

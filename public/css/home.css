@@ -1,0 +1,72 @@
+.bannerHome {
+    height: 100vh;
+    background-color: #000000;
+    transition: all 0.1s;
+    background-image: url(/img/home.jpg);
+    background-size: cover;
+    color: white;
+    text-shadow: 3px 3px 10px black;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    overflow: auto;
+}
+
+.card{
+    padding: 10px 20px;
+    background: rgba(250, 250, 250, 0.69);
+    text-shadow: none;
+    color: black;
+    width: fit-content;
+}
+
+.button-home {
+    --tw-bg-opacity: 1;
+    background-color: rgba(70, 255, 189, 1);
+    border: none;
+
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+
+    --tw-text-opacity: 1;
+    color: rgba(12, 4, 46, 1);
+    text-shadow: none;
+
+    text-transform: uppercase;
+    font-weight: 500;
+
+    font-size: 1.2rem;
+
+    outline: none;
+}
+
+.button-home:hover {
+    --tw-text-opacity: 1;
+    color: rgba(70,255,189, 1);
+    background: transparent;
+}
+
+
+.affiche {
+    height: 60vh;
+    box-shadow: 0 0 20px 20px #47ffbe3b;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 500ms;
+    border-radius: 20px;
+}
+
+.affiche:hover {
+    box-shadow: 0 0 20px 20px rgba(71, 255, 190, 0.45);
+}
+
+.bannerHome > h1 {
+    padding-bottom: 25px;
+}
+
+.bannerHome > p {
+    font-size: 17px;
+    font-weight: 200;
+}

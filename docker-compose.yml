@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  front:
+    container_name: front
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
