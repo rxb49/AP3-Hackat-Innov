@@ -233,8 +233,12 @@ class EquipeController extends Controller
 
     function detailEquipe(Request $request)
     {
-        // Récupération de tous les membres
-        $data = Membre::all();
+        if (!SessionHelpers::isConnected()) {
+            return redirect("/login")->withErrors(['errors' => "Vous devez être connecté pour accéder à cette page."]);
+        }
+
+        try{
+            $data = Membre::all();
 
         // Initialisation de la variable lequipe
         $lequipe = null;
@@ -248,5 +252,8 @@ class EquipeController extends Controller
         }
 
         return view('doc.membres', ['data' => $data, 'lequipe' => $lequipe]);
+        }catch(\Exception $e){
+            return redirect("/")->withErrors(['errors' => "Une erreur est survenue lors de l'inscription au hackathon."]);
+        }
     }
 }
