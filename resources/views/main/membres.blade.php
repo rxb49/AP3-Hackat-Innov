@@ -1,23 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Membres de l'équipe {{ $equipe->nomequipe }}</title>
-</head>
-<body>
+@extends('layouts.app')
 
-    <h1>Membres de l'équipe {{ $equipe->nomequipe }}</h1>
+@section('title', ' - Bienvenue')
 
-    @if($membres->isEmpty())
-        <p>Aucun membre trouvé dans cette équipe.</p>
-    @else
-        <ul>
-            @foreach($membres as $membre)
-                <li>{{ $membre->prenom }} {{ $membre->nom }}</li>
-            @endforeach
-        </ul>
-    @endif
+@section('custom-css')
+    <link href="/css/home.css" rel="stylesheet"/>
+@endsection
 
-    <a href="{{ url()->previous() }}">Retour</a>
-
-</body>
-</html>
+@section('content')
+    <p>{{$equipe}}</p>
+@endsection

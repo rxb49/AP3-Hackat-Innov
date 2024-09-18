@@ -30,8 +30,8 @@ class MainController extends Controller
         return view('main.about');
     }
 
-    public function hackathon()
+    public function membres()
     {
-        return view('main.membre');
+        return view('main.membres', ['equipe' => 'idequipe']);
     }
 }

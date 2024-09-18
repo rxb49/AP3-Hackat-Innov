@@ -48,7 +48,7 @@
                 <a class="btn bg-green m-2 button-home" href="#" @click.prevent="participantsIsShown = false">←</a> Listes des participants
                 <ul class="pt-3">
                     <li class="member" v-for="p in participants">🧑‍💻 @{{p['nomequipe']}}
-                    <a class="btn bg-green m-2 button-home" href="/membre">
+                    <a class="btn bg-green m-2 button-home" :href="`/equipes/detailEquipe?ide=` + p.idequipe">
                             <span>Membre de l'equipe @{{p['nomequipe']}} @{{p['idequipe']}}</span>
                         </a>
                     </li>

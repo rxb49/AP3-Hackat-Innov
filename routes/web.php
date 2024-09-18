@@ -14,7 +14,7 @@ include('inc/api.php');
 // Routes de base
 Route::get('/', [MainController::class, 'home'])->name('home');
 Route::get('/about', [MainController::class, 'about'])->name('about');
-Route::get('/membre', [MainController::class, 'membre'])->name('membre');
+Route::get('/equipes/detailEquipe', [EquipeController::class, 'detailEquipe'])->name('detail-equipe');
 
 
 // Routes d'authentification et de gestion d'équipe

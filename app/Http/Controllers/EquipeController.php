@@ -230,4 +230,23 @@ class EquipeController extends Controller
             return redirect("/me")->withErrors(['errors' => "Une erreur est survenue lors de l'ajout du membre à votre équipe."]);
         }
     }
+
+    function detailEquipe(Request $request)
+    {
+        // Récupération de tous les membres
+        $data = Membre::all();
+
+        // Initialisation de la variable lequipe
+        $lequipe = null;
+
+        if($request->has('ide')) {
+            // Récupération de l'équipe spécifiée
+            $lequipe = Equipe::find($request->input('ide'));
+
+            // Récupération des membres de l'équipe spécifiée
+            $data = Membre::where('idequipe', $request->input('ide'))->get();
+        }
+
+        return view('doc.membres', ['data' => $data, 'lequipe' => $lequipe]);
+    }
 }
