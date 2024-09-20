@@ -36,7 +36,7 @@
                 @endif
 
                 <div class="d-flex flex-wrap pt-3">
-                @if (date('Y-m-d H:i:s') <= $hackathon->dateheuredebuth && count($hackathon->equipes) < $hackathon->nbequipemax)
+                @if (date('Y-m-d H:i:s') <= $hackathon->datebutoir && count($hackathon->equipes) < $hackathon->nbequipemax)
                     <a class="btn bg-green m-2 button-home" href="/join?idh=<?= $hackathon->idhackathon ?>">Rejoindre</a>
                     <a class="btn bg-green m-2 button-home" href="{{route("create-team")}}">Créer mon équipe</a>
                 @endif
@@ -44,6 +44,9 @@
                         <span v-if="!loading">Les participants</span>
                         <span v-else>Chargement en cours…</span>
                     </a>
+                    <div class="btn bg-green m-2 button-home">
+                        <span v-if="!loading">Equipe inscrite <?= $hackathon->nbequipeinscrite ?> /<?= $hackathon->nbequipemax ?></span>
+                    </div>
                 </div>
             </div>
             <div v-else>

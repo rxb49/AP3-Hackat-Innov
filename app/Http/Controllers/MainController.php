@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Hackathon;
+use App\Models\Inscrire;
 use Illuminate\Http\Request;
 
 class MainController extends Controller
@@ -20,6 +21,14 @@ class MainController extends Controller
             'hackathon' => $hackathon,
             'organisateur' => $hackathon->organisateur,
         ]);
+    }
+
+    public function nbInscrit(){
+         $hackathon = Hackathon::getActiveHackathon();
+         $valeursFiltre = Inscrire::where('idhackhathon', $hackathon )->orderBy('idequipe');
+         return view('main.home', [
+         'nbInscrit' => $valeursFiltre,
+     ]);
     }
 
     /**

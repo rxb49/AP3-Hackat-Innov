@@ -55,7 +55,7 @@
                     @endforeach
                 </ul>
 
-                <form method="post" class="row g-1" action="{{ route("membre-add") }}">
+                <form method="post" class="row g-1" action="me">
                     @csrf
                     <div class="col">
                         <input required type="text" placeholder="Nom" name="nom" class="form-control"/>

@@ -19,4 +19,5 @@ class Membre extends Model
     {
         return $this->belongsTo(Equipe::class, 'idequipe');
     }
+    
 }

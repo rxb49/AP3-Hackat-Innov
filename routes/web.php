@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 include('inc/api.php');
 
 // Routes de base
-Route::get('/', [MainController::class, 'home'])->name('home');
+Route::get('/', [MainController::class, 'home', 'nbInscrit'])->name('home');
 Route::get('/about', [MainController::class, 'about'])->name('about');
 Route::get('/equipes/detailEquipe', [EquipeController::class, 'detailEquipe'])->name('detail-equipe');
 
@@ -34,7 +34,7 @@ Route::get('/doc-api/equipes', [ApiDocController::class, 'listeEquipes'])->name(
 Route::middleware(isEquipeConnected::class)->group(function () {
     Route::get('/logout', [EquipeController::class, 'logout'])->name('logout');
     Route::get('/me', [EquipeController::class, 'me'])->name('me');
+    Route::post('/me', [EquipeController::class, 'addMembre'])->name('addMembre');
     Route::post('/membre/add', [EquipeController::class, 'addMembre'])->name('membre-add');
-
 
 });
