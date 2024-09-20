@@ -196,7 +196,6 @@ class EquipeController extends Controller
 
         // Validation des données, pour l'instant nous n'avons que NOM et PRENOM.
         // TODO : À l'avenir ajouter l'ensemble des champs nécessaires prévus dans la base de données.
-
         $request->validate(
             [
                 'nom' => 'required|string|max:255',
@@ -222,7 +221,6 @@ class EquipeController extends Controller
             $membre->save();
 
             // TODO : envoyer un email de confirmation au membre en s'inspirant de la méthode create de EquipeController (emailHelpers::sendEmail)
-            EmailHelpers::sendEmail($equipe->login, "Ajout de votre d'un membre", "email.create-team", ['equipe' => $equipe]);
             // Redirection vers la page de l'équipe
             return redirect("/me")->with('success', "Le membre a bien été ajouté à votre équipe.");
         } catch (\Exception $e) {
