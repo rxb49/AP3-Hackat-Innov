@@ -78,7 +78,7 @@
 
 <script>
     function confirmer(){
-    var res = confirm("Êtes-vous sûr de vouloir supprimer ce membre?");
+    var res = confirm("Êtes-vous sûr de vouloir supprimer?");
     if(res){
         return('/about');
     }

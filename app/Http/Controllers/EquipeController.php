@@ -217,7 +217,8 @@ class EquipeController extends Controller
             $membre = new Membre();
             $membre->nom = $request->input('nom');
             $membre->prenom = $request->input('prenom');
-            $membre->idequipe = $equipe->idequipe;
+            $membre->idequipe = $equipe->idequipe; 
+            dd($membre);
             $membre->save();
 
             // TODO : envoyer un email de confirmation au membre en s'inspirant de la méthode create de EquipeController (emailHelpers::sendEmail)
@@ -254,4 +255,11 @@ class EquipeController extends Controller
             return redirect("/")->withErrors(['errors' => "Une erreur est survenue lors de l'inscription au hackathon."]);
         }
     }
+
+    function getNbInscritByHackathon($idh)
+    {
+        return response()->json(Inscrire::getNbInscrit($idh));
+    }
+
+
 }

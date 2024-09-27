@@ -22,6 +22,8 @@
                         au <?= date_create($hackathon->dateheurefinh)->format("d/m/Y H:i") ?></div>
                     <div><em>Lieu :</em> <?= $hackathon->ville ?></div>
                     <div><em>Organisateur :</em> <?= "{$organisateur->nom} {$organisateur->prenom}" ?></div>
+                    <div v-if="!loading">Equipe inscrite <?= $hackathon->nbInscrit ?> /<?= $hackathon->nbequipemax ?></div>
+                    <div v-if="!loading">Date butoir d'inscription: <?= $hackathon->datebutoir ?></div>
                 </div>
 
                 <!-- Affichage des messages d'erreurs -->
@@ -43,22 +45,20 @@
                     <a class="btn bg-green m-2 button-home" href="#" @click.prevent="getParticipants">
                         <span v-if="!loading">Les participants</span>
                         <span v-else>Chargement en cours…</span>
+                        <a class="btn bg-green m-2 button-home" href="/quit?idh=<?= $hackathon->idhackathon ?>">Quitter</a>
                     </a>
-                    <div class="btn bg-green m-2 button-home">
-                        <span v-if="!loading">Equipe inscrite <?= $hackathon->nbequipeinscrite ?> /<?= $hackathon->nbequipemax ?></span>
-                    </div>
+
                 </div>
             </div>
             <div v-else>
                 <a class="btn bg-green m-2 button-home" href="#" @click.prevent="participantsIsShown = false">←</a> Listes des participants
                 <ul class="pt-3">
                     <li class="member" v-for="p in participants">🧑‍💻 @{{p['nomequipe']}}
-                    <a class="btn bg-green m-2 button-home" :href="`/equipes/detailEquipe?ide=` + p.idequipe">
+                        <a class="btn bg-green m-2 button-home" :href="`/equipes/detailEquipe?ide=` + p.idequipe">
                             <span>Membre de l'equipe @{{p['nomequipe']}} @{{p['idequipe']}}</span>
                         </a>
                     </li>
                 </ul>
-
             </div>
         </div>
     </div>
