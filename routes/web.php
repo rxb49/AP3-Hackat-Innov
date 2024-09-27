@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ApiDocController;
 use App\Http\Controllers\EquipeController;
 use App\Http\Controllers\HackathonController;

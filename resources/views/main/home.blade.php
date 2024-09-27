@@ -45,7 +45,7 @@
                     <a class="btn bg-green m-2 button-home" href="#" @click.prevent="getParticipants">
                         <span v-if="!loading">Les participants</span>
                         <span v-else>Chargement en cours…</span>
-                        <a class="btn bg-green m-2 button-home" href="/quit?idh=<?= $hackathon->idhackathon ?>">Quitter</a>
+                        <a class="btn bg-green m-2 button-home" href="/quit?idh=<?= $hackathon->idhackathon ?>">Désinscrire l'équipe</a>
                     </a>
 
                 </div>

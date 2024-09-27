@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Inscrire;
-use App\Utils\SessionHelpers;
-use Illuminate\Http\Request;
 use App\Utils\EmailHelpers;
+use Illuminate\Http\Request;
+use App\Utils\SessionHelpers;
 
 
 class HackathonController extends Controller
@@ -24,7 +24,7 @@ class HackathonController extends Controller
 
         // Récupération de l'id du hackathon actif
         $idh = $request->get('idh');
-
+        
         try{
             // Inscription de l'équipe au hackathon
             $inscription = new Inscrire();
@@ -34,7 +34,7 @@ class HackathonController extends Controller
             $inscription->save();
 
             // TODO : envoyer un email de confirmation à l'équipe en utilisant la classe EmailHelpers, et la méthode sendEmail (exemple présent dans le contrôleur EquipeController)
-            EmailHelpers::sendEmail($equipe->login, "Inscription de votre équipe", "email.create-team", ['equipe' => $equipe]);
+            EmailHelpers::sendEmail($equipe->login, "Inscription de votre équipe", "email.join-hackhathon", ['equipe' => $equipe]);
             // Redirection vers la page de l'équipe
             return redirect("/me")->with('success', "Inscription réussie, vous faites maintenant partie du hackathon.");
         } catch (\Exception $e) {
