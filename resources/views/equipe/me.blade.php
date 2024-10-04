@@ -41,8 +41,10 @@
             </div>
 
             <div class="card-actions">
+                <a href="/modifEquipe" class="btn btn-success btn-small">Modifier l'equipe</a>
                 <a href="/logout" class="btn btn-danger btn-small">Déconnexion</a>
             </div>
+
         </div>
 
         <div class="card cardRadius mt-3">

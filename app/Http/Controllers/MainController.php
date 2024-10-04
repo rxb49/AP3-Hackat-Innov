@@ -15,20 +15,14 @@ class MainController extends Controller
     {
         // Récuération du hackathon actif (celui en cours)
         $hackathon = Hackathon::getActiveHackathon();
-
+        // Récupération du nb d'équipe inscrite au hackathon
+        $nbInscrit = Inscrire::getNbInscrit($hackathon);
         // Affichage de la vue, avec les données récupérées
         return view('main.home', [
             'hackathon' => $hackathon,
+            'nbInscrit' => $nbInscrit,
             'organisateur' => $hackathon->organisateur,
         ]);
-    }
-
-    public function nbInscrit(){
-         $hackathon = Hackathon::getActiveHackathon();
-         $valeursFiltre = Inscrire::where('idhackhathon', $hackathon )->orderBy('idequipe');
-         return view('main.home', [
-         'nbInscrit' => $valeursFiltre,
-     ]);
     }
 
     /**

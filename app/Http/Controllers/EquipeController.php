@@ -157,6 +157,75 @@ class EquipeController extends Controller
         return redirect()->route('home');
     }
 
+        /**
+     * Méthode de modification d l'équipe, vide la session et redirige vers la page d'accueil.
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function modifEquipe()
+    {
+        if(SessionHelpers::isConnected()){
+            $equipe = SessionHelpers::getConnected();
+
+            return view('equipe.modifEquipe', ['equipe' => $equipe]);
+        }
+    }
+
+
+    public function modif(Request $request)
+    {
+        // Vérifier que l'équipe est connectée
+        if (!SessionHelpers::isConnected()) {
+            return redirect("/login")->withErrors(['errors' => "Vous devez être connecté pour accéder à cette page."]);
+        }
+
+        // Récupération de l'équipe connectée
+        $equipe = SessionHelpers::getConnected();
+
+        // Si la requête est de type GET, on affiche le formulaire
+        if ($request->isMethod('get')) {
+            return view('equipe.modifEquipe', ['equipe' => $equipe]);
+        }
+
+        // Si la requête est POST, on traite la modification
+        if ($request->isMethod('post')) {
+            // Validation des données du formulaire
+            $validated = $request->validate(
+                [
+                    'nom' => 'required|string|max:255',
+                    'lien' => 'required|string|max:255',
+                    'email' => 'required|email|max:255|unique:EQUIPE,login,' . $equipe->idequipe . ',idequipe', // Ignore l'équipe connectée pour l'unicité
+                ],
+                [
+                    'required' => 'Le champ :attribute est obligatoire.',
+                    'string' => 'Le champ :attribute doit être une chaîne de caractères.',
+                    'max' => 'Le champ :attribute ne peut pas dépasser :max caractères.',
+                    'email' => 'Le champ :attribute doit être une adresse email valide.',
+                    'unique' => 'Cette adresse :attribute est déjà utilisée.',
+                    'min' => 'Le champ :attribute doit contenir au moins :min caractères.',
+                ],
+                [
+                    'nom' => 'nom de l\'équipe',
+                    'lien' => 'lien de l\'équipe',
+                    'email' => 'email',
+                ]
+            );
+
+            try {
+                // Mise à jour des informations de l'équipe
+                $equipe->nomequipe = $validated['nom'];
+                $equipe->lienprototype = $validated['lien'];
+                $equipe->login = $validated['email'];
+                $equipe->save();
+
+                // Redirection avec un message de succès
+                return redirect("/me")->with('success', "Les informations de votre équipe ont été mises à jour avec succès.");
+            } catch (\Exception $e) {
+                // Gestion des erreurs
+                return redirect("/modif-team")->withErrors(['errors' => "Une erreur est survenue lors de la mise à jour des informations de l'équipe."]);
+            }
+        }
+    }
+
 
     /**
      * Méthode de visualisation de la page de profil de l'équipe.
@@ -190,44 +259,42 @@ class EquipeController extends Controller
      * Méthode d'ajout d'un membre à l'équipe.
      */
     public function addMembre(Request $request)
-    {
-        // Ajout d'un membre à l'équipe
-        $equipe = SessionHelpers::getConnected();
+{
+    // Récupération de l'équipe connectée
+    $equipe = SessionHelpers::getConnected();
 
-        // Validation des données, pour l'instant nous n'avons que NOM et PRENOM.
-        // TODO : À l'avenir ajouter l'ensemble des champs nécessaires prévus dans la base de données.
-        $request->validate(
-            [
-                'nom' => 'required|string|max:255',
-                'prenom' => 'required|string|max:255',
-            ],
-            [
-                'required' => 'Le champ :attribute est obligatoire.',
-                'string' => 'Le champ :attribute doit être une chaîne de caractères.',
-                'max' => 'Le champ :attribute ne peut pas dépasser :max caractères.',
-            ],
-            [
-                'nom' => 'nom',
-                'prenom' => 'prénom',
-            ]
-        );
-
-        try {
-            // Création du membre
-            $membre = new Membre();
-            $membre->nom = $request->input('nom');
-            $membre->prenom = $request->input('prenom');
-            $membre->idequipe = $equipe->idequipe; 
-            $membre->save();
-
-            // TODO : envoyer un email de confirmation au membre en s'inspirant de la méthode create de EquipeController (emailHelpers::sendEmail)
-            // Redirection vers la page de l'équipe
-            return redirect("/me")->with('success', "Le membre a bien été ajouté à votre équipe.");
-        } catch (\Exception $e) {
-            // Redirection vers la page de l'équipe avec un message d'erreur
-            return redirect("/me")->withErrors(['errors' => "Une erreur est survenue lors de l'ajout du membre à votre équipe."]);
-        }
+    // Vérification que l'équipe existe
+    if (!$equipe || !$equipe->idequipe) {
+        return redirect("/me")->withErrors(['errors' => "Aucune équipe n'a été trouvée pour l'utilisateur connecté."]);
     }
+
+    // Validation des données
+    $request->validate([
+        'nom' => 'required|string|max:255',
+        'prenom' => 'required|string|max:255',
+    ], [
+        'required' => 'Le champ :attribute est obligatoire.',
+        'string' => 'Le champ :attribute doit être une chaîne de caractères.',
+        'max' => 'Le champ :attribute ne peut pas dépasser :max caractères.',
+    ], [
+        'nom' => 'nom',
+        'prenom' => 'prénom',
+    ]);
+
+    try {
+        // Création du membre
+        $membre = new Membre();
+        $membre->nom = $request->input('nom');
+        $membre->prenom = $request->input('prenom');
+        $membre->idequipe = $equipe->idequipe;
+        $membre->save();
+
+        return redirect("/me")->with('success', "Le membre a bien été ajouté à votre équipe.");
+    } catch (\Exception $e) {
+        return redirect("/me")->withErrors(['errors' => "Une erreur est survenue lors de l'ajout du membre à votre équipe."]);
+    }
+}
+
 
     function detailEquipe(Request $request)
     {

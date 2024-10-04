@@ -20,13 +20,12 @@ class Inscrire extends Model
     protected $fillable = ['idhackathon', 'idequipe', 'dateinscription'];
 
 
-    public static function getNbInscrit($idHackathon): Inscrire
+    public static function getNbInscrit($idHackathon) : int
     {
         $nbInscrit = DB::table('INSCRIRE')
-        ->where('INSCRIRE.idhackathon', $idHackathon)
-        ->get()
-        ->toArray();
-
-        return Inscrire::hydrate($nbInscrit);
+            ->where('idhackathon', $idHackathon)
+            ->count('idequipe');  // On compte le nombre d'équipes inscrites
+    
+        return $nbInscrit;
     }
 }

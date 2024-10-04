@@ -22,7 +22,7 @@
                         au <?= date_create($hackathon->dateheurefinh)->format("d/m/Y H:i") ?></div>
                     <div><em>Lieu :</em> <?= $hackathon->ville ?></div>
                     <div><em>Organisateur :</em> <?= "{$organisateur->nom} {$organisateur->prenom}" ?></div>
-                    <div v-if="!loading">Equipe inscrite <?= $hackathon->nbInscrit ?> /<?= $hackathon->nbequipemax ?></div>
+                    <div v-if="!loading">Equipe inscrite <?= $nbInscrit ?> /<?= $hackathon->nbequipemax ?></div>
                     <div v-if="!loading">Date butoir d'inscription: <?= $hackathon->datebutoir ?></div>
                 </div>
 

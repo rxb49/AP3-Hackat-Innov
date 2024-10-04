@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 include('inc/api.php');
 
 // Routes de base
-Route::get('/', [MainController::class, 'home', 'nbInscrit'])->name('home');
+Route::get('/', [MainController::class, 'home'])->name('home');
 Route::get('/about', [MainController::class, 'about'])->name('about');
 Route::get('/equipes/detailEquipe', [EquipeController::class, 'detailEquipe'])->name('detail-equipe');
 
@@ -24,6 +24,8 @@ Route::post('/login', [EquipeController::class, 'connect'])->name('connect');
 Route::get('/join', [HackathonController::class, 'join'])->name('join');
 Route::get('/quit', [HackathonController::class, 'quit'])->name('quit');
 Route::any('/create-team', [EquipeController::class, 'create'])->name('create-team'); // Any pour gérer les GET et POST
+Route::any('/modif-team', [EquipeController::class, 'modif'])->name('modif-team');
+
 
 // Routes de l'API pour la documentation et les listes
 Route::get('/doc-api/', [ApiDocController::class, 'liste'])->name('doc-api');
@@ -35,6 +37,7 @@ Route::get('/doc-api/equipes', [ApiDocController::class, 'listeEquipes'])->name(
 // Proctection par le middleware IsEquipeConnected (voir app/Http/Middleware/IsEquipeConnected.php)
 Route::middleware(isEquipeConnected::class)->group(function () {
     Route::get('/logout', [EquipeController::class, 'logout'])->name('logout');
+    Route::get('/modifEquipe', [EquipeController::class, 'modifEquipe'])->name('modifEquipe');
     Route::get('/me', [EquipeController::class, 'me'])->name('me');
     Route::post('/me', [EquipeController::class, 'addMembre'])->name('addMembre');
     Route::post('/membre/add', [EquipeController::class, 'addMembre'])->name('membre-add');
