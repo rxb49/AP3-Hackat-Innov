@@ -255,6 +255,38 @@ class EquipeController extends Controller
         return view('equipe.me', ['connected' => $equipe, 'membres' => $membres, 'hackathon' => $hackathon, 'membres' => $membres]);
     }
 
+
+    public function deleteMembre(Request $request, $idMembre)
+    {
+        // Vérifie que l'équipe est connectée
+        if (!SessionHelpers::isConnected()) {
+            return redirect("/login")->withErrors(['errors' => "Vous devez être connecté pour accéder à cette fonctionnalité."]);
+        }
+
+        // Récupération de l'équipe connectée
+        $equipe = SessionHelpers::getConnected();
+
+        // Recherche du membre par ID
+        $membre = Membre::where('idmembre', $idMembre)->where('idequipe', $equipe->idequipe)->first();
+
+        // Vérifie si le membre existe
+        if (!$membre) {
+            return redirect("/me")->withErrors(['errors' => "Le membre n'a pas été trouvé."]);
+        }
+
+        try {
+            // Suppression du membre
+            $membre->delete();
+
+            // Redirection avec un message de succès
+            return redirect("/me")->with('success', "Le membre a bien été supprimé de votre équipe.");
+        } catch (\Exception $e) {
+            // Gestion des erreurs
+            return redirect("/me")->withErrors(['errors' => "Une erreur est survenue lors de la suppression du membre."]);
+        }
+    }
+
+
     /**
      * Méthode d'ajout d'un membre à l'équipe.
      */
@@ -272,13 +304,25 @@ class EquipeController extends Controller
     $request->validate([
         'nom' => 'required|string|max:255',
         'prenom' => 'required|string|max:255',
+        'email' => 'required|email|max:255',
+        'telephone' => 'required|string|max:128',
+        'datenaissance' => 'required|date|max:255',
+        'lienportfolio' => 'required|string|max:255',
+
+
     ], [
         'required' => 'Le champ :attribute est obligatoire.',
         'string' => 'Le champ :attribute doit être une chaîne de caractères.',
+        'email' => 'Le champ :attribute doit être une adresse email valide.',
+        'date' => 'Le champ :attribute doit être une date',
         'max' => 'Le champ :attribute ne peut pas dépasser :max caractères.',
     ], [
         'nom' => 'nom',
         'prenom' => 'prénom',
+        'email' => 'email',
+        'telephone' => 'telephone',
+        'datenaissance' => 'datenaissance',
+        'lienportfolio' => 'lienportfolio',
     ]);
 
     try {
@@ -286,6 +330,10 @@ class EquipeController extends Controller
         $membre = new Membre();
         $membre->nom = $request->input('nom');
         $membre->prenom = $request->input('prenom');
+        $membre->email = $request->input('email');
+        $membre->telephone = $request->input('telephone');
+        $membre->datenaissance = $request->input('datenaissance');
+        $membre->lienportfolio = $request->input('lienportfolio');
         $membre->idequipe = $equipe->idequipe;
         $membre->save();
 

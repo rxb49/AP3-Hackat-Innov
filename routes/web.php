@@ -22,7 +22,7 @@ Route::get('/equipes/detailEquipe', [EquipeController::class, 'detailEquipe'])->
 Route::get('/login', [EquipeController::class, 'login'])->name('login');
 Route::post('/login', [EquipeController::class, 'connect'])->name('connect');
 Route::get('/join', [HackathonController::class, 'join'])->name('join');
-Route::get('/quit', [HackathonController::class, 'quit'])->name('quit');
+Route::post('/hackathon/quitter', [HackathonController::class, 'quit'])->name('leaveHackathon');
 Route::any('/create-team', [EquipeController::class, 'create'])->name('create-team'); // Any pour gérer les GET et POST
 Route::any('/modif-team', [EquipeController::class, 'modif'])->name('modif-team');
 
@@ -41,5 +41,7 @@ Route::middleware(isEquipeConnected::class)->group(function () {
     Route::get('/me', [EquipeController::class, 'me'])->name('me');
     Route::post('/me', [EquipeController::class, 'addMembre'])->name('addMembre');
     Route::post('/membre/add', [EquipeController::class, 'addMembre'])->name('membre-add');
+    Route::delete('/membre/{id}', [EquipeController::class, 'deleteMembre'])->name('deleteMembre');
+
 
 });
