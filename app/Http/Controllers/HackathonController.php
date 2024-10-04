@@ -31,6 +31,7 @@ class HackathonController extends Controller
             $inscription->idhackathon = $idh;
             $inscription->idequipe = $equipe->idequipe;
             $inscription->dateinscription = date('Y-m-d H:i:s');
+            $inscription->datedesinscription = null;
             $inscription->save();
 
             // TODO : envoyer un email de confirmation à l'équipe en utilisant la classe EmailHelpers, et la méthode sendEmail (exemple présent dans le contrôleur EquipeController)
@@ -64,6 +65,7 @@ class HackathonController extends Controller
 
             // Si l'inscription existe, on la supprime
             if ($inscription) {
+                $inscription->datedesinscription = date('Y-m-d H:i:s');
                 $inscription->delete();
 
                 // TODO : envoyer un email de confirmation à l'équipe pour l'informer du départ
