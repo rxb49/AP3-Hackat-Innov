@@ -33,6 +33,11 @@ class MainController extends Controller
         return view('main.about');
     }
 
+    public function archive()
+    {
+        return view('main.archive');
+    }
+
     public function membres()
     {
         return view('main.membres', ['equipe' => 'idequipe']);
