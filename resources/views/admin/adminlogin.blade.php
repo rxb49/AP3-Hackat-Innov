@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', ' - Login')
 
@@ -27,13 +27,11 @@
                 @endif
 
                 <!-- Login Form -->
-                <form action="{{route("connect")}}">
+                <form action="{{route("adminConnect")}}">
                     @csrf
                     <input type="text" id="login" class="fadeIn second" name="email" placeholder="Email"/>
-                    <input type="password" id="password" class="fadeIn third" name="password" placeholder="Password"/>
+                    <input type="password" id="motpasse" class="fadeIn third" name="motpasse" placeholder="Mot de passe"/>
                     <input type="submit" class="fadeIn fourth" value="Connexion"/>
-
-                    <a href="{{ route("create-team") }}" class="fadeIn fourth d-block p-2 text-black">Créer une équipe</a>
                 </form>
 
 

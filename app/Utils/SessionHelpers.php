@@ -2,6 +2,7 @@
 
 namespace App\Utils;
 
+use App\Models\Administrateur;
 use App\Models\Equipe;
 
 class SessionHelpers
@@ -16,6 +17,13 @@ class SessionHelpers
     static function login(Equipe $equipe): void
     {
         session()->put(self::$sessionKey, $equipe);
+        session()->save();
+    }
+
+    static function adminLogin(Administrateur $admin): void
+    {
+        session()->put(self::$sessionKey, $admin);
+        session()->put('is_admin', true);  // Ajout de l'indicateur 'is_admin'
         session()->save();
     }
 
@@ -46,6 +54,12 @@ class SessionHelpers
     {
         return session()->has(self::$sessionKey);
     }
+
+    public static function isAdmin(): bool
+    {
+        return session()->has('is_admin') && session()->get('is_admin') === true;
+    }
+    
 
     public static function flash(string $type, $message)
     {

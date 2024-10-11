@@ -39,14 +39,10 @@
             <?php
 
 
- if (!SessionHelpers::isConnected()) { ?>
-            <li class="nav-item"><a href="{{ route("login") }}" class="nav-link white-link @if (Route::is('login')) {{'active-link'}} @endif">Login</a></li>
-            <li class="nav-item"><a href="{{ route("adminlogin") }}" class="nav-link white-link @if (Route::is('adminlogin')) {{'active-link'}} @endif">Login Admin</a></li>
-            <?php } else if (SessionHelpers::isAdmin()) {?>
+
+            if (!SessionHelpers::isConnected()){ ?>
             <li class="nav-item"><a href="{{ route("doc-api") }}" class="nav-link white-link @if (Route::is('doc-api')) {{'active-link'}} @endif">🔐 API</a></li>
             <li class="nav-item"><a href="{{ route("logout") }}" class="nav-link white-link @if (Route::is('logout')) {{'active-link'}} @endif">Log Out</a></li>
-            <?php } else { ?>
-                <li class="nav-item"><a href="/me" class="nav-link white-link @if (Route::is('me')) {{'active-link'}} @endif">Mon profil</a></li>
             <?php } ?>
         </ul>
     </header>

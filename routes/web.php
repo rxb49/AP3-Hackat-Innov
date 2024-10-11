@@ -26,6 +26,8 @@ Route::post('/hackathon/quitter', [HackathonController::class, 'quit'])->name('l
 Route::any('/create-team', [EquipeController::class, 'create'])->name('create-team'); // Any pour gérer les GET et POST
 Route::any('/modif-team', [EquipeController::class, 'modif'])->name('modif-team');
 Route::get('/adminlogin', [AdminController::class, 'adminLogin'])->name('adminlogin');
+Route::post('/adminlogin', [AdminController::class, 'adminConnect'])->name('adminConnect');
+
 
 
 // Routes de l'API pour la documentation et les listes
