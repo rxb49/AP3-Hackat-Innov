@@ -35,15 +35,6 @@
             <li class="nav-item"><a href="{{ route("home") }}" class="nav-link white-link @if (Route::is('home')) {{'active-link'}} @endif" aria-current="page">Home</a></li>
             <li class="nav-item"><a href="{{ route("about") }}" class="nav-link white-link @if (Route::is('about')) {{'active-link'}} @endif">About</a></li>
             <li class="flex-grow-1"></li>
-
-            <?php
-
-
-
-            if (!SessionHelpers::isConnected()){ ?>
-            <li class="nav-item"><a href="{{ route("doc-api") }}" class="nav-link white-link @if (Route::is('doc-api')) {{'active-link'}} @endif">🔐 API</a></li>
-            <li class="nav-item"><a href="{{ route("logout") }}" class="nav-link white-link @if (Route::is('logout')) {{'active-link'}} @endif">Log Out</a></li>
-            <?php } ?>
         </ul>
     </header>
 </div>

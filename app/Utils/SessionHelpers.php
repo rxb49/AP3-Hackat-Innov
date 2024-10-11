@@ -23,7 +23,7 @@ class SessionHelpers
     static function adminLogin(Administrateur $admin): void
     {
         session()->put(self::$sessionKey, $admin);
-        session()->put('is_admin', true);  // Ajout de l'indicateur 'is_admin'
+        session()->put('is_admin', true);
         session()->save();
     }
 
@@ -34,6 +34,7 @@ class SessionHelpers
     static function logout(): void
     {
         session()->forget(self::$sessionKey);
+        session()->put('is_admin', false);
         session()->save();
     }
 
