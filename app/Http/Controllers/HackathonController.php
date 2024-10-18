@@ -84,9 +84,37 @@ class HackathonController extends Controller
     }
 
     public function list(){
-        $hackathon = Hackathon::orderBy('dateheuredebuth', 'asc')->get();
+        $hackathon = Hackathon::orderBy('dateheuredebuth', 'asc')->paginate(5);
         return view('main.archive', 
         ['hackathon' => $hackathon]);
     }
+
+    public function listPassedHackathon() {
+        $hackathon = Hackathon::where('dateheurefinh', '<=', now())
+                    ->orderBy('dateheuredebuth', 'asc')
+                    ->paginate(5);
+                    
+        return view('main.archive', ['hackathon' => $hackathon]);
+    }
+
+    public function listIncomingHackathon() {
+        $hackathon = Hackathon::where('dateheurefinh', '>=', now())
+                    ->orderBy('dateheuredebuth', 'asc')
+                    ->paginate(5);
+                    
+        return view('main.archive', ['hackathon' => $hackathon]);
+    }
+
+    public function listHackathonByEquipe(Request $request) {
+        $equipe = SessionHelpers::getConnected();
+        $ide = $request->get('ide');
+        dd($equipe);
+        $hackathon = Inscrire::where('idequipe', $ide)
+                    ->orderBy('dateheuredebuth', 'asc')
+                    ->paginate(5);
+                    
+        return view('main.archive', ['hackathon2' => $hackathon, 'connected' => $equipe]);
+    }
+    
 
 }

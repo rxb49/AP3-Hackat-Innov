@@ -17,6 +17,11 @@ Route::get('/', [MainController::class, 'home'])->name('home');
 Route::get('/about', [MainController::class, 'about'])->name('about');
 Route::get('/equipes/detailEquipe', [EquipeController::class, 'detailEquipe'])->name('detail-equipe');
 Route::get('/archive', [HackathonController::class, 'list'])->name('archive');
+Route::get('/passedArchive', [HackathonController::class, 'listPassedHackathon'])->name('passedhackathon');
+Route::get('/incomingArchive', [HackathonController::class, 'listIncomingHackathon'])->name('incominghackathon');
+Route::get('/archiveByEquipe', [HackathonController::class, 'listHackathonByEquipe'])->name('archiveByEquipe');
+
+
 
 
 // Routes d'authentification et de gestion d'équipe
