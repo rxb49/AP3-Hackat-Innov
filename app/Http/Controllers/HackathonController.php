@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Hackathon;
 use App\Models\Inscrire;
 use App\Utils\EmailHelpers;
 use Illuminate\Http\Request;
@@ -80,6 +81,12 @@ class HackathonController extends Controller
             // Redirection vers la page d'accueil avec un message d'erreur
             return redirect("/me")->withErrors(['errors' => "Une erreur est survenue lors de la désinscription du hackathon."]);
         }
+    }
+
+    public function list(){
+        $hackathon = Hackathon::orderBy('dateheuredebuth', 'asc')->get();
+        return view('main.archive', 
+        ['hackathon' => $hackathon]);
     }
 
 }

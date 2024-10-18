@@ -16,14 +16,14 @@ include('inc/api.php');
 Route::get('/', [MainController::class, 'home'])->name('home');
 Route::get('/about', [MainController::class, 'about'])->name('about');
 Route::get('/equipes/detailEquipe', [EquipeController::class, 'detailEquipe'])->name('detail-equipe');
-Route::get('/archive', [MainController::class, 'archive'])->name('archive');
+Route::get('/archive', [HackathonController::class, 'list'])->name('archive');
 
 
 // Routes d'authentification et de gestion d'équipe
 Route::get('/login', [EquipeController::class, 'login'])->name('login');
 Route::post('/login', [EquipeController::class, 'connect'])->name('connect');
 Route::get('/join', [HackathonController::class, 'join'])->name('join');
-Route::post('/hackathon/quitter', [HackathonController::class, 'quit'])->name('leaveHackathon');
+Route::post('/quit', [HackathonController::class, 'quit'])->name('quit');
 Route::any('/create-team', [EquipeController::class, 'create'])->name('create-team'); // Any pour gérer les GET et POST
 Route::any('/modif-team', [EquipeController::class, 'modif'])->name('modif-team');
 Route::get('/adminlogin', [AdminController::class, 'adminLogin'])->name('adminlogin');

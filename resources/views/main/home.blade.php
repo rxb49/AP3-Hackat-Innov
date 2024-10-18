@@ -48,7 +48,7 @@
                     </a>
 
                     <!-- Formulaire pour quitter le hackathon -->
-                    <form action="{{ route('leaveHackathon') }}" method="POST" style="display: inline;">
+                    <form action="{{ route('quit') }}" method="POST" style="display: inline;">
                         @csrf
                         <input type="hidden" name="idh" value="<?= $hackathon->idhackathon ?>"> <!-- Assurez-vous de passer l'ID correct -->
                         <button type="submit" class="btn bg-red m-2 button-home">Désinscrire l'équipe</button>
