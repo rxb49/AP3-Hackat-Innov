@@ -28,6 +28,7 @@
                 <th>Date de début</th>
                 <th>Date de fin</th>
                 <th>Lieu</th>
+                <th>Commentaires</th>
             </tr>
         </thead>
         <tbody>
@@ -39,6 +40,7 @@
                     <td><?= date_create($h->dateheuredebuth)->format("d/m/Y H:i") ?></td>
                     <td><?= date_create($h->dateheurefinh)->format("d/m/Y H:i") ?></td>
                     <td><?= $h->ville ?></td>
+                    <td><a class="btn bg-green m-2 button-home" :href="/archive/commentaire?idh=` + h.idhackathon"><?= $h->thematique ?></a></td> 
                 </tr>
             <?php endforeach; ?>
         </tbody>
