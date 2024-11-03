@@ -12,12 +12,6 @@
     <a class="btn bg-green m-2 button-home" href="/archive">Tout afficher</a>
     <a class="btn bg-green m-2 button-home" href="/passedArchive">Hackathon passé</a>
     <a class="btn bg-green m-2 button-home" href="/incomingArchive">Hackathon futur</a>
-    <?php
-    use App\Utils\SessionHelpers;
-
-    // if (SessionHelpers::isConnected()) { ?>
-         <!--<a class="btn bg-green m-2 button-home" href="/archiveByEquipe?ide=<//?= $connected->nomequipe ?>">Hackathon de l'équipe</a><br>
-    // <//?php } ?>-->
 
     <table class="table table-striped mt-4">
         <thead>
@@ -34,13 +28,18 @@
         <tbody>
             <?php foreach ($hackathon as $h): ?>
                 <tr>
-                    <td><?= $h->thematique ?></td>
-                    <td><?= nl2br($h->objectifs) ?></td>
-                    <td><?= nl2br($h->conditions) ?></td>
+                    <td><?= htmlspecialchars($h->thematique) ?></td>
+                    <td><?= nl2br(htmlspecialchars($h->objectifs)) ?></td>
+                    <td><?= nl2br(htmlspecialchars($h->conditions)) ?></td>
                     <td><?= date_create($h->dateheuredebuth)->format("d/m/Y H:i") ?></td>
                     <td><?= date_create($h->dateheurefinh)->format("d/m/Y H:i") ?></td>
-                    <td><?= $h->ville ?></td>
-                    <td><a class="btn bg-green m-2 button-home" :href="/archive/commentaire?idh=` + h.idhackathon"><?= $h->thematique ?></a></td> 
+                    <td><?= htmlspecialchars($h->ville) ?></td>
+                    <!-- Lien vers les commentaires du hackathon en PHP pur -->
+                    <td>
+                        <a class="btn bg-green m-2 button-home" href="/archive/commentaire?idh=<?= $h->idhackathon ?>">
+                            Voir commentaires
+                        </a>
+                    </td> 
                 </tr>
             <?php endforeach; ?>
         </tbody>

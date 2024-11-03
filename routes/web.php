@@ -20,6 +20,7 @@ Route::get('/archive', [HackathonController::class, 'list'])->name('archive');
 Route::get('/passedArchive', [HackathonController::class, 'listPassedHackathon'])->name('passedhackathon');
 Route::get('/incomingArchive', [HackathonController::class, 'listIncomingHackathon'])->name('incominghackathon');
 Route::get('/archiveByEquipe', [HackathonController::class, 'listHackathonByEquipe'])->name('archiveByEquipe');
+Route::get('/archive/commentaire', [HackathonController::class, 'commentaire'])->name('commentaire');
 
 
 

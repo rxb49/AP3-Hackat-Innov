@@ -115,6 +115,12 @@ class HackathonController extends Controller
                     
         return view('main.archive', ['hackathon2' => $hackathon, 'connected' => $equipe]);
     }
+
+    public function commentaire(Request $request) {
+        $idh = $request->get('idh');
+        $hackathon = Hackathon::where('idhackathon', $idh)->first();
+        return view('main.commentaire', ['hackathon' => $hackathon]);
+    }
     
 
 }
