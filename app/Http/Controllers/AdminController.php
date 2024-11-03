@@ -51,4 +51,6 @@ class AdminController extends Controller
         // Redirection vers la page d'acceuil
         return redirect("/");
     }
+
+    
 }

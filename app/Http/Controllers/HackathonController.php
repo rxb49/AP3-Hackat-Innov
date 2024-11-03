@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Commentaire;
 use App\Models\Hackathon;
 use App\Models\Inscrire;
 use App\Utils\EmailHelpers;
@@ -61,15 +62,17 @@ class HackathonController extends Controller
         try {
             // Vérification de l'inscription de l'équipe au hackathon
             $inscription = Inscrire::where('idhackathon', $idh)
-            ->where('idequipe', $equipe->idequipe)
-            ->first();
+                ->where('idequipe', $equipe->idequipe)
+                ->first();
 
-            // Si l'inscription existe, on la supprime
+            // Si l'inscription existe, on la modifie
             if ($inscription) {
-                $inscription->datedesinscription = date('Y-m-d H:i:s');
-                $inscription->delete();
+                // Mettre à jour les dates d'inscription et de désinscription
+                $inscription->datedesinscription = date('Y-m-d H:i:s'); // Date et heure actuelle
+                $inscription->dateinscription = null; // Mise à null de la date d'inscription
+                $inscription->save();
 
-                // TODO : envoyer un email de confirmation à l'équipe pour l'informer du départ
+                // Envoyer un email de confirmation à l'équipe pour l'informer du départ
                 EmailHelpers::sendEmail($equipe->login, "Désinscription de votre équipe", "email.leave-hackathon", ['equipe' => $equipe]);
 
                 // Redirection vers la page de l'équipe avec un message de succès
@@ -116,11 +119,43 @@ class HackathonController extends Controller
         return view('main.archive', ['hackathon2' => $hackathon, 'connected' => $equipe]);
     }
 
-    public function commentaire(Request $request) {
-        $idh = $request->get('idh');
-        $hackathon = Hackathon::where('idhackathon', $idh)->first();
-        return view('main.commentaire', ['hackathon' => $hackathon]);
+
+    public function commentaire(Request $request)
+    {    
+        // Vérifier si l'utilisateur est connecté
+        if (!SessionHelpers::isConnected()) {
+            return redirect("/login")->withErrors(['errors' => "Vous devez être connecté pour accéder à cette page."]);
+        }
+
+        try {
+            // Initialiser les variables
+            $data = collect();  // Liste de commentaires initialement vide
+            $hackathon = null;  // Hackathon initialisé à null
+
+            // Vérifier la présence du paramètre 'idh' dans la requête
+            if ($request->has('idh')) {
+                $idhackathon = $request->input('idh');
+
+                // Récupérer le hackathon en fonction de l'id fourni
+                $hackathon = Hackathon::find($idhackathon);
+
+                if (!$hackathon) {
+                    return redirect("/")->withErrors(['errors' => "Hackathon non trouvé."]);
+                }
+
+                // Récupérer les commentaires associés au hackathon
+                $data = Commentaire::where('idhackathon', $idhackathon)->paginate(5);
+            }
+
+            // Renvoyer la vue avec les données
+            return view('main.commentaire', ['data' => $data, 'hackathon' => $hackathon]);
+
+        } catch (\Exception $e) {
+            // Rediriger avec un message d'erreur en cas d'exception
+            return redirect("/")->withErrors(['errors' => "Une erreur est survenue lors de la récupération des commentaires."]);
+        }
     }
-    
+
+
 
 }

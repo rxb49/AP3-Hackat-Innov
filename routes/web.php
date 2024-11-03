@@ -1,14 +1,16 @@
 <?php
 
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ApiDocController;
-use App\Http\Controllers\EquipeController;
-use App\Http\Controllers\HackathonController;
-use App\Http\Controllers\MainController;
-use App\Http\Middleware\IsEquipeConnected;
 use App\Models\Equipe;
 use App\Utils\SessionHelpers;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MainController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ApiDocController;
+use App\Http\Controllers\EquipeController;
+use App\Http\Middleware\IsEquipeConnected;
+use App\Http\Controllers\HackathonController;
+use App\Http\Controllers\CommentaireController;
+use App\Http\Controllers\TwoFactorAuthController;
 
 include('inc/api.php');
 
@@ -21,6 +23,7 @@ Route::get('/passedArchive', [HackathonController::class, 'listPassedHackathon']
 Route::get('/incomingArchive', [HackathonController::class, 'listIncomingHackathon'])->name('incominghackathon');
 Route::get('/archiveByEquipe', [HackathonController::class, 'listHackathonByEquipe'])->name('archiveByEquipe');
 Route::get('/archive/commentaire', [HackathonController::class, 'commentaire'])->name('commentaire');
+Route::post('/comment', [CommentaireController::class, 'addCommentaire'])->name('addCommentaire');
 
 
 
@@ -34,6 +37,7 @@ Route::any('/create-team', [EquipeController::class, 'create'])->name('create-te
 Route::any('/modif-team', [EquipeController::class, 'modif'])->name('modif-team');
 Route::get('/adminlogin', [AdminController::class, 'adminLogin'])->name('adminlogin');
 Route::post('/adminlogin', [AdminController::class, 'adminConnect'])->name('adminConnect');
+Route::get('/2fa/setup', [TwoFactorAuthController::class, 'setup2FA'])->middleware('auth')->name('2fa.setup');
 
 
 
