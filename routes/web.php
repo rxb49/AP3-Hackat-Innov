@@ -10,7 +10,6 @@ use App\Http\Controllers\EquipeController;
 use App\Http\Middleware\IsEquipeConnected;
 use App\Http\Controllers\HackathonController;
 use App\Http\Controllers\CommentaireController;
-use App\Http\Controllers\TwoFactorAuthController;
 
 include('inc/api.php');
 
@@ -37,7 +36,6 @@ Route::any('/create-team', [EquipeController::class, 'create'])->name('create-te
 Route::any('/modif-team', [EquipeController::class, 'modif'])->name('modif-team');
 Route::get('/adminlogin', [AdminController::class, 'adminLogin'])->name('adminlogin');
 Route::post('/adminlogin', [AdminController::class, 'adminConnect'])->name('adminConnect');
-Route::get('/2fa/setup', [TwoFactorAuthController::class, 'setup2FA'])->middleware('auth')->name('2fa.setup');
 
 
 
