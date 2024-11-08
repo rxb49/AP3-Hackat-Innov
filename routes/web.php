@@ -36,6 +36,7 @@ Route::any('/create-team', [EquipeController::class, 'create'])->name('create-te
 Route::any('/modif-team', [EquipeController::class, 'modif'])->name('modif-team');
 Route::get('/adminlogin', [AdminController::class, 'adminLogin'])->name('adminlogin');
 Route::post('/adminlogin', [AdminController::class, 'adminConnect'])->name('adminConnect');
+Route::get('/listequipe', [AdminController::class, 'listEquipe'])->name('listequipe');
 Route::get('/download', [AdminController::class, 'download'])->name('download');
 
 

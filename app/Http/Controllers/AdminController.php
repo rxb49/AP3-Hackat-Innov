@@ -43,7 +43,7 @@ class AdminController extends Controller
         // Le message d'erreur est volontairement vague pour des raisons de sécurité
         // En cas d'erreur, on ne doit pas donner d'informations sur l'existence ou non de l'email
         if (!password_verify($validated['motpasse'], $admin->motpasse)) {
-            return redirect("/adminlogin")->withErrors(['errors' => "Aucun administrateur n'a été trouvée avec cer email."]);
+            return redirect("/adminlogin")->withErrors(['errors' => "Aucun administrateur n'a été trouvée avec cet email."]);
         }
         // Connexion de l'admin
         SessionHelpers::adminLogin($admin);
@@ -51,21 +51,41 @@ class AdminController extends Controller
         return redirect("/");
     }
 
-    function download(){
-
-        // Récupère tous les utilisateurs de la base de données
-        $equipe = Equipe::all();
-
-        // Convertit les données en format JSON
-        $equipeJson = $equipe->toJson(JSON_PRETTY_PRINT);
+    function listEquipe(){
         
-        // Spécifiez le chemin et le nom du fichier JSON
-        $filePath = storage_path('public/equipe.json');
+        $equipe = Equipe::paginate(5);
+        
+        return view('admin.listEquipe', ['equipe' => $equipe]);
+        }
 
-        // Enregistre le JSON dans un fichier
+    function download(Request $request){
+
+        if ($request->has('idh')) {
+            $idequipe = $request->input('idh');
+        }
+
+        // Récupère les données de l'équipe spécifique par ID
+        $equipe = Equipe::find($idequipe);
+
+        // Vérifie si l'équipe existe
+        if (!$equipe) {
+            return response()->json(['message' => 'Équipe non trouvée'], 404);
+        }
+
+        
+
+        // Convertit les données de l'équipe en JSON
+        $equipeJson = $equipe->toJson(JSON_PRETTY_PRINT);
+
+        // Définit un nom pour le fichier temporaire
+        $fileName = "equipe_{$idequipe}.json";
+        $filePath = storage_path("app/public/$fileName");
+
+        // Écrit les données JSON dans le fichier
         File::put($filePath, $equipeJson);
 
-        return response()->json(['message' => 'Données exportées avec succès !', 'path' => $filePath]);
+        // Retourne le fichier pour téléchargement et le supprime après l'envoi
+        return response()->download($filePath, $fileName)->deleteFileAfterSend();
 
     }
 }

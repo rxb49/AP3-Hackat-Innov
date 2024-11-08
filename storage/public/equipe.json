@@ -47,5 +47,12 @@
         "lienprototype": "https:\/\/webwizards.prototype.com",
         "login": "webwizards@yahoo.com",
         "password": "$2y$10$zhqnpXR7S37bDPDFHbSHtueFGDqZrXOS3zqc6Ry0gX8sf30YHGEQe"
+    },
+    {
+        "idequipe": 8,
+        "nomequipe": "Les profs2",
+        "lienprototype": null,
+        "login": "profs2@gmail.com",
+        "password": "$2y$10$zhqnpXR7S37bDPDFHbSHtueFGDqZrXOS3zqc6Ry0gX8sf30YHGEQe"
     }
 ]
