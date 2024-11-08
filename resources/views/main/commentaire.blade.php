@@ -131,7 +131,7 @@
             </div>
         @endforeach
     </div>
-        
+
         <!-- Formulaire pour ajouter un commentaire -->
             <form action="/comment" method="POST" class="mt-4">
                 @csrf

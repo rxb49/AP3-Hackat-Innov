@@ -49,6 +49,7 @@ use App\Utils\SessionHelpers;
             if (SessionHelpers::isAdmin()) {?>
             <li class="nav-item"><a href="{{ route("doc-api") }}" class="nav-link white-link @if (Route::is('doc-api')) {{'active-link'}} @endif">🔐 API</a></li>
             <li class="nav-item"><a href="{{ route("logout") }}" class="nav-link white-link @if (Route::is('logout')) {{'active-link'}} @endif">Log Out</a></li>
+            <li class="nav-item"><a href="{{ route("download") }}" class="nav-link white-link @if (Route::is('download')) {{'active-link'}} @endif">Telecharger les données</a></li>
             <?php } ?>
 
         </ul>

@@ -1,0 +1,51 @@
+[
+    {
+        "idequipe": 1,
+        "nomequipe": "Les profs",
+        "lienprototype": null,
+        "login": "profs@gmail.com",
+        "password": "$2y$10$zhqnpXR7S37bDPDFHbSHtueFGDqZrXOS3zqc6Ry0gX8sf30YHGEQe"
+    },
+    {
+        "idequipe": 2,
+        "nomequipe": "Jobar team",
+        "lienprototype": null,
+        "login": "jobar@hotmail.com",
+        "password": "$2y$10$zhqnpXR7S37bDPDFHbSHtueFGDqZrXOS3zqc6Ry0gX8sf30YHGEQe"
+    },
+    {
+        "idequipe": 3,
+        "nomequipe": "Validation \u00c9quipe",
+        "lienprototype": "https:\/\/www.google.com",
+        "login": "validation@google.com",
+        "password": "$2y$12$5ZISC1f1gr5iAeVO4andaucTkdXgA79IIagj9Uhei7KR3NiqyNU1K"
+    },
+    {
+        "idequipe": 4,
+        "nomequipe": "Websharp Wizards",
+        "lienprototype": "https:\/\/127.0.0.1:8080",
+        "login": "robintijou05@gmail.com",
+        "password": "$2y$12$EncoItG2OZvLk3TM\/kdDc.MMShwE8Dl6dT3P3iZ0Cx1e5TaTfF1hm"
+    },
+    {
+        "idequipe": 5,
+        "nomequipe": "CodeBusters",
+        "lienprototype": "https:\/\/codebusters.prototype.com",
+        "login": "codebusters@gmail.com",
+        "password": "$2y$10$zhqnpXR7S37bDPDFHbSHtueFGDqZrXOS3zqc6Ry0gX8sf30YHGEQe"
+    },
+    {
+        "idequipe": 6,
+        "nomequipe": "DataMiners",
+        "lienprototype": "https:\/\/dataminers.prototype.com",
+        "login": "dataminers@hotmail.com",
+        "password": "$2y$10$zhqnpXR7S37bDPDFHbSHtueFGDqZrXOS3zqc6Ry0gX8sf30YHGEQe"
+    },
+    {
+        "idequipe": 7,
+        "nomequipe": "WebWizards",
+        "lienprototype": "https:\/\/webwizards.prototype.com",
+        "login": "webwizards@yahoo.com",
+        "password": "$2y$10$zhqnpXR7S37bDPDFHbSHtueFGDqZrXOS3zqc6Ry0gX8sf30YHGEQe"
+    }
+]

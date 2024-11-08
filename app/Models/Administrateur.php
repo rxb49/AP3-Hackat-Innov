@@ -12,9 +12,8 @@ class Administrateur extends Model
     protected $primaryKey = 'idadministrateur';
     public $timestamps = false;
 
-    protected $fillable = ['nom', 'prenom', 'motpasse', 'email', 'google2fa_secret', 'google2fa_enabled'];
+    protected $fillable = ['nom', 'prenom', 'motpasse', 'email'];
 
     protected $hidden = [
-        'google2fa_secret',
     ];
 }

@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Equipe;
 use Illuminate\Http\Request;
 use App\Utils\SessionHelpers;
 use App\Models\Administrateur;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
-use PragmaRX\Google2FALaravel\Google2FA;
+use Illuminate\Support\Facades\File;
+
 
 class AdminController extends Controller
 {
@@ -18,130 +19,53 @@ class AdminController extends Controller
 
     public function adminConnect(Request $request)
     {
-        // 1. Validation des champs
-        $validated = $request->validate([
-            'email' => 'required|email',
-            'motpasse' => 'required',
-        ], [
-            'required' => 'Le champ :attribute est obligatoire.',
-            'email' => 'Le champ :attribute doit être une adresse email valide.',
-        ]);
-
-        // 2. Récupération de l'admin
+        $validated = $request->validate(
+            [
+                'email' => 'required|email',
+                'motpasse' => 'required',
+            ],
+            [
+                'required' => 'Le champ :attribute est obligatoire.',
+                'email' => 'Le champ :attribute doit être une adresse email valide.',
+            ],
+            [
+                'email' => 'email',
+                'motpasse' => 'mot de passe',
+            ]
+        );
+        // Récupération de l'admin avec l'email fourni
         $admin = Administrateur::where('email', $validated['email'])->first();
-
-        // Log pour déboguer
-        Log::info('Tentative de connexion', [
-            'email' => $validated['email'],
-            'admin_exists' => $admin ? 'oui' : 'non'
-        ]);
-
-        // Si l'admin n'existe pas
+        // Si l'admin n'existe pas, on redirige vers la page de connexion avec un message d'erreur
         if (!$admin) {
-            Log::info('Administrateur non trouvé');
-            return redirect("/adminlogin")->withErrors(['errors' => "Identifiants invalides"]);
+            return redirect("/adminlogin")->withErrors(['errors' => "Aucun administrateur n'a été trouvée avec cet email."]);
         }
-
-        // 3. Vérification du mot de passe
-        // Essayons les deux méthodes de vérification possibles
-        $passwordValid = false;
-
-        // Méthode 1 : password_verify()
-        if (password_verify($validated['motpasse'], $admin->motpasse)) {
-            $passwordValid = true;
-            Log::info('Mot de passe validé avec password_verify');
+        // Si le mot de passe est incorrect, on redirige vers la page de connexion avec un message d'erreur
+        // Le message d'erreur est volontairement vague pour des raisons de sécurité
+        // En cas d'erreur, on ne doit pas donner d'informations sur l'existence ou non de l'email
+        if (!password_verify($validated['motpasse'], $admin->motpasse)) {
+            return redirect("/adminlogin")->withErrors(['errors' => "Aucun administrateur n'a été trouvée avec cer email."]);
         }
-        // Méthode 2 : Hash::check()
-        else if (Hash::check($validated['motpasse'], $admin->motpasse)) {
-            $passwordValid = true;
-            Log::info('Mot de passe validé avec Hash::check');
-        }
-
-        Log::info('Vérification mot de passe', [
-            'password_valid' => $passwordValid ? 'oui' : 'non',
-            'password_hash_type' => gettype($admin->motpasse),
-            'password_length' => strlen($admin->motpasse)
-        ]);
-
-        if (!$passwordValid) {
-            return redirect("/adminlogin")->withErrors(['errors' => "Identifiants invalides"]);
-        }
-
-        // 4. Vérification 2FA si activé
-        if ($admin->google2fa_enabled) {
-            $request->validate([
-                'code_2fa' => 'required|numeric|digits:6'
-            ], [
-                'code_2fa.required' => 'Le code 2FA est requis',
-                'code_2fa.numeric' => 'Le code 2FA doit être numérique',
-                'code_2fa.digits' => 'Le code 2FA doit faire 6 chiffres'
-            ]);
-
-            $google2fa = app('pragmarx.google2fa');
-            
-            $valid = $google2fa->verifyKey(
-                $admin->google2fa_secret,
-                $request->input('code_2fa')
-            );
-
-            if (!$valid) {
-                return redirect("/adminlogin")->withErrors(['errors' => "Code d'authentification invalide"]);
-            }
-        }
-
-        // 5. Connexion réussie
-        Log::info('Connexion réussie pour ' . $admin->email);
+        // Connexion de l'admin
         SessionHelpers::adminLogin($admin);
+        // Redirection vers la page d'acceuil
         return redirect("/");
     }
 
-    public function enable2FA(Request $request)
-    {
-        $admin = SessionHelpers::getConnected();
-        $google2fa = app('pragmarx.google2fa');
+    function download(){
 
-        // Générer une nouvelle clé secrète
-        $secret = $google2fa->generateSecretKey();
+        // Récupère tous les utilisateurs de la base de données
+        $equipe = Equipe::all();
 
-        // Sauvegarder la clé secrète temporairement en session
-        session(['2fa_secret' => $secret]);
-
-        // Générer le QR code
-        $qrCodeUrl = $google2fa->getQRCodeUrl(
-            config('app.name'),
-            $admin->email,
-            $secret
-        );
-
-        return view('admin.setup2fa', compact('qrCodeUrl', 'secret'));
-    }
-
-    public function confirm2FA(Request $request)
-    {
-        $request->validate([
-            'code' => 'required|numeric|digits:6'
-        ], [
-            'code.required' => 'Le code est requis',
-            'code.numeric' => 'Le code doit être numérique',
-            'code.digits' => 'Le code doit faire 6 chiffres'
-        ]);
-
-        $admin = SessionHelpers::getConnected();
-        $secret = session('2fa_secret');
+        // Convertit les données en format JSON
+        $equipeJson = $equipe->toJson(JSON_PRETTY_PRINT);
         
-        $google2fa = app('pragmarx.google2fa');
-        
-        $valid = $google2fa->verifyKey($secret, $request->code);
+        // Spécifiez le chemin et le nom du fichier JSON
+        $filePath = storage_path('public/equipe.json');
 
-        if ($valid) {
-            $admin->google2fa_secret = $secret;
-            $admin->google2fa_enabled = true;
-            $admin->save();
-            
-            session()->forget('2fa_secret');
-            return redirect('/admin/profile')->with('success', '2FA activé avec succès');
-        }
+        // Enregistre le JSON dans un fichier
+        File::put($filePath, $equipeJson);
 
-        return back()->withErrors(['code' => 'Code invalide']);
+        return response()->json(['message' => 'Données exportées avec succès !', 'path' => $filePath]);
+
     }
 }

@@ -370,4 +370,8 @@ class EquipeController extends Controller
         }
     }
 
+    function telecharger(){
+        
+    }
+
 }

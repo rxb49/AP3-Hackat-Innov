@@ -36,8 +36,9 @@ Route::any('/create-team', [EquipeController::class, 'create'])->name('create-te
 Route::any('/modif-team', [EquipeController::class, 'modif'])->name('modif-team');
 Route::get('/adminlogin', [AdminController::class, 'adminLogin'])->name('adminlogin');
 Route::post('/adminlogin', [AdminController::class, 'adminConnect'])->name('adminConnect');
-Route::get('/admin/2fa/enable', [AdminController::class, 'enable2FA'])->name('admin.2fa.enable');
-Route::post('/admin/2fa/confirm', [AdminController::class, 'confirm2FA'])->name('admin.2fa.confirm');
+Route::get('/download', [AdminController::class, 'download'])->name('download');
+
+
 
 
 
