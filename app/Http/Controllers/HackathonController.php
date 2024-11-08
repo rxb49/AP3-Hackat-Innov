@@ -36,8 +36,10 @@ class HackathonController extends Controller
             $inscription->datedesinscription = null;
             $inscription->save();
 
+            $hackathon = Hackathon::find($idh);
+
             // TODO : envoyer un email de confirmation à l'équipe en utilisant la classe EmailHelpers, et la méthode sendEmail (exemple présent dans le contrôleur EquipeController)
-            EmailHelpers::sendEmail($equipe->login, "Inscription de votre équipe", "email.join-hackhathon", ['equipe' => $equipe]);
+            EmailHelpers::sendEmail($equipe->login, "Inscription de votre équipe", "email.join-hackhathon", ['equipe' => $equipe, 'hackathon' => $hackathon ]);
             // Redirection vers la page de l'équipe
             return redirect("/me")->with('success', "Inscription réussie, vous faites maintenant partie du hackathon.");
         } catch (\Exception $e) {

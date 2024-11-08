@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Equipe;
+use App\Models\Membre;
+use App\Models\Inscrire;
+use App\Utils\EmailHelpers;
 use Illuminate\Http\Request;
 use App\Utils\SessionHelpers;
 use App\Models\Administrateur;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 
 
 class AdminController extends Controller
@@ -66,6 +69,35 @@ class AdminController extends Controller
 
         // Récupère les données de l'équipe spécifique par ID
         $equipe = Equipe::find($idequipe);
+        $inscription = Inscrire::where('idequipe', $idequipe)->get();
+        $membre = Membre::where('idequipe', $idequipe)->get();
+
+        $data = [
+            'equipe' => $equipe,
+            'inscription' => $inscription,
+            'membre' => $membre
+        ];
+
+        $jsonData = json_encode($data, JSON_PRETTY_PRINT);
+
+        // Crée un nom de fichier pour le fichier JSON
+        $fileName = "equipe_{$equipe->id}_data.json";
+
+        // Définit le chemin temporaire pour le fichier
+        $filePath = storage_path("app/public/$fileName");
+
+        // Écrit le fichier JSON sur le disque
+        File::put($filePath, $jsonData);
+
+        $admin = SessionHelpers::getAdminConnected();
+
+        EmailHelpers::sendEmail(
+            $admin->email, 
+            "Téléchargement des données de l'équipe {$equipe->nomequipe}", 
+            "email.download-equipe", 
+            ['admin' => $admin, 'equipe' => $equipe, 'inscription' => $inscription, 'membre' => $membre],
+            $filePath // Passer le chemin du fichier JSON pour l'ajouter en pièce jointe
+        );
 
         // Vérifie si l'équipe existe
         if (!$equipe) {
@@ -75,7 +107,8 @@ class AdminController extends Controller
         
 
         // Convertit les données de l'équipe en JSON
-        $equipeJson = $equipe->toJson(JSON_PRETTY_PRINT);
+        $equipeJson = collect(['equipe' => $equipe, 'inscription' => $inscription, 'membre' => $membre])->toJson(JSON_PRETTY_PRINT);
+
 
         // Définit un nom pour le fichier temporaire
         $fileName = "equipe_{$idequipe}.json";
