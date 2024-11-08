@@ -12,6 +12,14 @@
     <a class="btn bg-green m-2 button-home" href="/archive">Tout afficher</a>
     <a class="btn bg-green m-2 button-home" href="/passedArchive">Hackathon passé</a>
     <a class="btn bg-green m-2 button-home" href="/incomingArchive">Hackathon futur</a>
+    <a class="btn bg-green m-2 button-home" href="/archiveByEquipe">Hackathon de l'équipe</a>
+
+    @if(session('alert'))
+    <script>
+        // Affichage du pop-up avec alert() si un message est dans la session
+        alert("{{ session('alert') }}");
+    </script>
+    @endif
 
     <table class="table table-striped mt-4">
         <thead>

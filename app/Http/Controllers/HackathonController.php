@@ -110,16 +110,25 @@ class HackathonController extends Controller
         return view('main.archive', ['hackathon' => $hackathon]);
     }
 
-    public function listHackathonByEquipe(Request $request) {
+    public function listHackathonByEquipe() {
         $equipe = SessionHelpers::getConnected();
-        $ide = $request->get('ide');
-        dd($equipe);
-        $hackathon = Inscrire::where('idequipe', $ide)
-                    ->orderBy('dateheuredebuth', 'asc')
-                    ->paginate(5);
-                    
-        return view('main.archive', ['hackathon2' => $hackathon, 'connected' => $equipe]);
+        $ide = $equipe->idequipe;
+        
+        $inscrire = Inscrire::where('idequipe', $ide)->get();
+    
+        if ($inscrire->isEmpty()) {
+            $allhackathon = Hackathon::paginate(5);
+            return view('main.archive')
+                ->with('alert', 'Aucune inscription trouvée pour cette équipe.')
+                ->with('hackathon', $allhackathon);
+        }
+    
+        $hackathon = Hackathon::whereIn('idhackathon', $inscrire->pluck('idhackathon'))
+                              ->paginate(5);
+                        
+        return view('main.archive', ['hackathon' => $hackathon, 'connected' => $equipe]);
     }
+    
 
 
     public function commentaire(Request $request)
