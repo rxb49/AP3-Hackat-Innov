@@ -25,6 +25,15 @@ class MainController extends Controller
         ]);
     }
 
+    public static function getNbInscrit($idHackathon) : int
+    {
+        $nbInscrit = Inscrire::get()
+            ->where('idhackathon', $idHackathon)
+            ->count('idequipe');  // On compte le nombre d'équipes inscrites
+    
+        return $nbInscrit;
+    }
+
     /**
      * Retourne la page "À propos"
      */
