@@ -125,7 +125,7 @@ class EquipeController extends Controller
             $equipe->save();
 
             // Envoi d'un email permettant de confirmer l'inscription
-            EmailHelpers::sendEmail($equipe->login, "Inscription de votre équipe", "email.create-team", ['equipe' => $equipe]);
+            EmailHelpers::sendEmail($equipe->login, "Création de votre équipe", "email.create-team", ['equipe' => $equipe]);
 
             // Connexion de l'équipe
             SessionHelpers::login($equipe);

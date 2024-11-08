@@ -34,6 +34,7 @@
         <ul class="nav nav-pills w-100 d-flex">
             <li class="nav-item"><a href="{{ route("home") }}" class="nav-link white-link @if (Route::is('home')) {{'active-link'}} @endif" aria-current="page">Home</a></li>
             <li class="nav-item"><a href="{{ route("about") }}" class="nav-link white-link @if (Route::is('about')) {{'active-link'}} @endif">About</a></li>
+            <li class="nav-item"><a href="{{ route("archive") }}" class="nav-link white-link @if (Route::is('archive')) {{'active-link'}} @endif">Archive</a></li>
             <li class="flex-grow-1"></li>
         </ul>
     </header>

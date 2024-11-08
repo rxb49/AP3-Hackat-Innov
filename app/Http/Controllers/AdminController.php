@@ -81,7 +81,7 @@ class AdminController extends Controller
         $jsonData = json_encode($data, JSON_PRETTY_PRINT);
 
         // Crée un nom de fichier pour le fichier JSON
-        $fileName = "equipe_{$equipe->id}_data.json";
+        $fileName = "{$equipe->nomequipe}_data.json";
 
         // Définit le chemin temporaire pour le fichier
         $filePath = storage_path("app/public/$fileName");
