@@ -172,59 +172,68 @@ class EquipeController extends Controller
 
 
     public function modif(Request $request)
-    {
-        // Vérifier que l'équipe est connectée
-        if (!SessionHelpers::isConnected()) {
-            return redirect("/login")->withErrors(['errors' => "Vous devez être connecté pour accéder à cette page."]);
-        }
+{
+    // Vérifier que l'équipe est connectée
+    if (!SessionHelpers::isConnected()) {
+        return redirect("/login")->withErrors(['errors' => "Vous devez être connecté pour accéder à cette page."]);
+    }
 
-        // Récupération de l'équipe connectée
-        $equipe = SessionHelpers::getConnected();
+    // Récupération de l'équipe connectée
+    $equipe = SessionHelpers::getConnected();
 
-        // Si la requête est de type GET, on affiche le formulaire
-        if ($request->isMethod('get')) {
-            return view('equipe.modifEquipe', ['equipe' => $equipe]);
-        }
+    // Si la requête est de type GET, on affiche le formulaire
+    if ($request->isMethod('get')) {
+        return view('equipe.modifEquipe', ['equipe' => $equipe]);
+    }
 
-        // Si la requête est POST, on traite la modification
-        if ($request->isMethod('post')) {
-            // Validation des données du formulaire
-            $validated = $request->validate(
-                [
-                    'nom' => 'required|string|max:255',
-                    'lien' => 'required|string|max:255',
-                    'email' => 'required|email|max:255|unique:EQUIPE,login,' . $equipe->idequipe . ',idequipe', // Ignore l'équipe connectée pour l'unicité
-                ],
-                [
-                    'required' => 'Le champ :attribute est obligatoire.',
-                    'string' => 'Le champ :attribute doit être une chaîne de caractères.',
-                    'max' => 'Le champ :attribute ne peut pas dépasser :max caractères.',
-                    'email' => 'Le champ :attribute doit être une adresse email valide.',
-                    'unique' => 'Cette adresse :attribute est déjà utilisée.',
-                    'min' => 'Le champ :attribute doit contenir au moins :min caractères.',
-                ],
-                [
-                    'nom' => 'nom de l\'équipe',
-                    'lien' => 'lien de l\'équipe',
-                    'email' => 'email',
-                ]
-            );
+    // Si la requête est POST, on traite la modification
+    if ($request->isMethod('post')) {
+        // Validation des données du formulaire
+        $validated = $request->validate(
+            [
+                'nom' => 'required|string|max:255',
+                'lien' => 'required|string|max:255',
+                'email' => 'required|email|max:255|unique:EQUIPE,login,' . $equipe->idequipe . ',idequipe', // Ignore l'équipe connectée pour l'unicité
+                'password' => 'nullable|string|min:8|confirmed', // Mot de passe (nullable, mais si présent, il doit être confirmé)
+            ],
+            [
+                'required' => 'Le champ :attribute est obligatoire.',
+                'string' => 'Le champ :attribute doit être une chaîne de caractères.',
+                'max' => 'Le champ :attribute ne peut pas dépasser :max caractères.',
+                'email' => 'Le champ :attribute doit être une adresse email valide.',
+                'unique' => 'Cette adresse :attribute est déjà utilisée.',
+                'min' => 'Le champ :attribute doit contenir au moins :min caractères.',
+                'confirmed' => 'Les mots de passe ne correspondent pas.', // Validation pour la confirmation du mot de passe
+            ],
+            [
+                'nom' => 'nom de l\'équipe',
+                'lien' => 'lien de l\'équipe',
+                'email' => 'email',
+                'password' => 'mot de passe',
+            ]
+        );
 
-            try {
-                // Mise à jour des informations de l'équipe
-                $equipe->nomequipe = $validated['nom'];
-                $equipe->lienprototype = $validated['lien'];
-                $equipe->login = $validated['email'];
-                $equipe->save();
+        try {
+            // Mise à jour des informations de l'équipe
+            $equipe->nomequipe = $validated['nom'];
+            $equipe->lienprototype = $validated['lien'];
+            $equipe->login = $validated['email'];
 
-                // Redirection avec un message de succès
-                return redirect("/me")->with('success', "Les informations de votre équipe ont été mises à jour avec succès.");
-            } catch (\Exception $e) {
-                // Gestion des erreurs
-                return redirect("/modif-team")->withErrors(['errors' => "Une erreur est survenue lors de la mise à jour des informations de l'équipe."]);
+            // Si un mot de passe est fourni, on le met à jour
+            if (!empty($validated['password'])) {
+                $equipe->password = bcrypt($validated['password']);
             }
+
+            $equipe->save();
+
+            // Redirection avec un message de succès
+            return redirect("/me")->with('success', "Les informations de votre équipe ont été mises à jour avec succès.");
+        } catch (\Exception $e) {
+            // Gestion des erreurs
+            return redirect("/modif-team")->withErrors(['errors' => "Une erreur est survenue lors de la mise à jour des informations de l'équipe."]);
         }
     }
+}
 
 
     /**
@@ -295,6 +304,8 @@ class EquipeController extends Controller
     // Récupération de l'équipe connectée
     $equipe = SessionHelpers::getConnected();
 
+
+
     // Vérification que l'équipe existe
     if (!$equipe || !$equipe->idequipe) {
         return redirect("/me")->withErrors(['errors' => "Aucune équipe n'a été trouvée pour l'utilisateur connecté."]);
@@ -337,6 +348,9 @@ class EquipeController extends Controller
         $membre->idequipe = $equipe->idequipe;
         $membre->save();
 
+
+        // Envoie d'un mail d'information
+        EmailHelpers::sendEmail($membre->email, "Ajout dans l'équipe", "email.add-membre", ['equipe' => $equipe, 'membre' => $membre]);
         return redirect("/me")->with('success', "Le membre a bien été ajouté à votre équipe.");
     } catch (\Exception $e) {
         return redirect("/me")->withErrors(['errors' => "Une erreur est survenue lors de l'ajout du membre à votre équipe."]);

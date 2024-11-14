@@ -42,7 +42,6 @@ class MainController extends Controller
 
         return $nbInscrit;
     }
-
     /**
      * Retourne la page "À propos"
      */

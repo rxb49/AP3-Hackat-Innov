@@ -51,43 +51,47 @@
                     <form action="{{ route('quit') }}" method="POST" style="display: inline;">
                         @csrf
                         <input type="hidden" name="idh" value="{{ $hackathon->idhackathon }}"> <!-- Assurez-vous de passer l'ID correct -->
-                        <button type="submit" class="btn bg-red m-2 button-home">Désinscrire l'équipe</button>
+                        <button type="submit" class="btn bg-red m-2 button-home" onclick="return confirm('Êtes-vous sûr de vouloir quitter le hackathon {{ $hackathon->thematique }}?');">Désinscrire l'équipe</button>
                     </form>
                 </div>
             </div>
             <div v-else>
-                <a class="btn bg-green m-2 button-home" href="#" @click.prevent="participantsIsShown = false">←</a> Liste des participants
-                <ul class="pt-3">
-                    <li class="member" v-for="p in participants">🧑‍💻 @{{p['nomequipe']}}
-                        <a class="btn bg-green m-2 button-home" :href="`/equipes/detailEquipe?ide=` + p.idequipe">
-                            <span>Membre de l'équipe @{{p['nomequipe']}} @{{p['idequipe']}}</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            <a class="btn bg-green m-2 button-home" href="#" @click.prevent="participantsIsShown = false">←</a> Liste des participants
+            <ul class="pt-3">
+                <li class="member" v-for="p in participants" :key="p.idequipe">
+                    🧑‍💻 @{{p['nomequipe']}}
+                    <a class="btn bg-green m-2 button-home" :href="`/equipes/detailEquipe?ide=` + p.idequipe">
+                        <span>Membre de l'équipe @{{p['nomequipe']}} @{{p['idequipe']}}</span>
+                    </a>
+                </li>
+            </ul>
         </div>
-    </div>
 
-    <script type="module">
-        import {createApp} from 'https://unpkg.com/petite-vue?module'
+        <script type="module">
+            import { createApp } from 'https://unpkg.com/petite-vue?module';
 
-        createApp({
-            participants: [],
-            participantsIsShown: false,
-            loading: false,
-            getParticipants() {
-                if (this.participants.length > 0) {
-                    this.participantsIsShown = true;
-                } else {
-                    this.loading = true;
+            createApp({
+                participants: [],
+                participantsIsShown: false,
+                loading: false,
+                getParticipants() {
+                    if (this.participants.length > 0) {
+                        this.participantsIsShown = true;
+                    } else {
+                        this.loading = true;
 
-                    fetch("/api/hackathon/<?= $hackathon->idhackathon ?>/equipe")
-                        .then(result => result.json())
-                        .then(participants => this.participants = participants)
-                        .then(() => this.participantsIsShown = true)
-                        .then(() => this.loading = false);
+                        fetch("/api/hackathon/<?= $hackathon->idhackathon ?>/equipe")
+                            .then(result => result.json())
+                            .then(participants => {
+                                // Filtrer les participants où 'dateinscription' n'est pas null
+                                this.participants = participants.filter(participant => participant.dateinscription !== null);
+                            })
+                            .then(() => {
+                                this.participantsIsShown = true;
+                                this.loading = false;
+                            });
+                    }
                 }
-            }
-        }).mount()
-    </script>
+            }).mount()
+        </script>
 @endsection

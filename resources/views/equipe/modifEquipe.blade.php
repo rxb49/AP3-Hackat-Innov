@@ -34,6 +34,8 @@
                     <hr/>
                     <p>Vos informations de connexion</p>
                     <input required type="email" class="form-control my-3" placeholder="Email" name="email" value="{{$equipe->login}}"/>
+                    <input type="password" class="form-control my-3" name="password" placeholder="Nouveau mot de passe">
+                    <input type="password" class="form-control my-3" name="password_confirmation" placeholder="Confirmer le mot de passe">
 
 
                     <hr/>

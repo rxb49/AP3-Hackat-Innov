@@ -42,7 +42,7 @@ use App\Utils\SessionHelpers;
 
  if (!SessionHelpers::isConnected()) { ?>
             <li class="nav-item"><a href="{{ route("login") }}" class="nav-link white-link @if (Route::is('login')) {{'active-link'}} @endif">Login</a></li>
-            <li class="nav-item"><a href="{{ route("adminlogin") }}" class="nav-link white-link @if (Route::is('adminlogin')) {{'active-link'}} @endif">Login Admin</a></li>
+            <li class="nav-item"><a href="{{ route("adminlogin") }}" class="nav-link white-link @if (Route::is('adminlogin')) {{'active-link'}} @endif">🔐 Login Admin</a></li>
             <?php } if (!SessionHelpers::isAdmin() && SessionHelpers::isConnected()) { ?>
                 <li class="nav-item"><a href="/me" class="nav-link white-link @if (Route::is('me')) {{'active-link'}} @endif">Mon profil</a></li>
             <?php } 
