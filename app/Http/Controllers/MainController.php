@@ -13,22 +13,33 @@ class MainController extends Controller
      */
     public function home()
     {
-        // Récuération du hackathon actif (celui en cours)
+        // Récupération du hackathon actif (celui en cours)
         $hackathon = Hackathon::getActiveHackathon();
-        // Récupération du nb d'équipe inscrite au hackathon
-        // Affichage de la vue, avec les données récupérées
+    
+        // Vérification si un hackathon actif existe
+        if ($hackathon) {
+            // Récupération du nombre d'équipes inscrites au hackathon
+            $nbInscrit = self::getNbInscrit($hackathon->idhackathon);
+        } else {
+            $nbInscrit = 0; // Aucun hackathon actif
+        }
+    
+        // Affichage de la vue avec les données récupérées
         return view('main.home', [
             'hackathon' => $hackathon,
-            'organisateur' => $hackathon->organisateur,
+            'organisateur' => $hackathon ? $hackathon->organisateur : null,
+            'nbInscrit' => $nbInscrit,
         ]);
     }
 
     public static function getNbInscrit($idHackathon) : int
     {
-        $nbInscrit = Inscrire::get()
-            ->where('idhackathon', $idHackathon)
-            ->count('idequipe');  // On compte le nombre d'équipes inscrites
-    
+        // Compter les équipes inscrites activement au hackathon (dateinscription non null et datedesinscription null)
+        $nbInscrit = Inscrire::where('idhackathon', $idHackathon)
+                            ->whereNotNull('dateinscription')
+                            ->whereNull('datedesinscription')
+                            ->count();
+
         return $nbInscrit;
     }
 
