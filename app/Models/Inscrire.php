@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Inscrire extends Model
 {
@@ -17,7 +16,45 @@ class Inscrire extends Model
     public $incrementing = false;
     public $timestamps = false;
 
-    protected $fillable = ['idhackathon', 'idequipe', 'dateinscription'];
+    protected $fillable = ['idhackathon', 'idequipe', 'dateinscription', 'datedesinscription'];
 
+    /**
+     * Set the keys for a save update query.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    protected function setKeysForSaveQuery($query)
+    {
+        $keys = $this->getKeyName();
+        if (!is_array($keys)) {
+            return parent::setKeysForSaveQuery($query);
+        }
 
+        foreach ($keys as $keyName) {
+            $query->where($keyName, '=', $this->getKeyForSaveQuery($keyName));
+        }
+
+        return $query;
+    }
+
+    /**
+     * Get the primary key value for a save query.
+     *
+     * @param mixed $keyName
+     * @return mixed
+     */
+    protected function getKeyForSaveQuery($keyName = null)
+    {
+        if (is_null($keyName)) {
+            $keyName = $this->getKeyName();
+        }
+
+        if (isset($this->original[$keyName])) {
+            return $this->original[$keyName];
+        }
+
+        return $this->getAttribute($keyName);
+    }
 }
+

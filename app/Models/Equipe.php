@@ -50,7 +50,7 @@ class Equipe extends Model
 
     public function hackathons()
     {
-        return $this->belongsToMany(Hackathon::class, 'INSCRIRE', 'idequipe', 'idhackathon')->withPivot('dateinscription');
+        return $this->belongsToMany(Hackathon::class, 'INSCRIRE', 'idequipe', 'idhackathon')->withPivot('dateinscription', 'datedesinscription');
     }
 
     public function tokens()

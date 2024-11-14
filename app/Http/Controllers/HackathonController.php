@@ -12,41 +12,60 @@ use App\Utils\SessionHelpers;
 
 class HackathonController extends Controller
 {
-    public function join(Request $request){
-        // Si l'équipe n'est pas connectée, on redirige vers la page de connexion
-        if (!SessionHelpers::isConnected()) {
-            return redirect("/login")->withErrors(['errors' => "Vous devez être connecté pour accéder à cette page."]);
-        }
+    public function join(Request $request)
+{
+    // Si l'équipe n'est pas connectée, on redirige vers la page de connexion
+    if (!SessionHelpers::isConnected()) {
+        return redirect("/login")->withErrors(['errors' => "Vous devez être connecté pour accéder à cette page."]);
+    }
 
-        // Récupération de l'équipe connectée
-        $equipe = SessionHelpers::getConnected();
+    // Récupération de l'équipe connectée
+    $equipe = SessionHelpers::getConnected();
+    $idh = $request->get('idh'); // ID du hackathon actif passé en paramètre
 
-        // Le hackathon actif est en paramètre de la requête (idh en GET).
-        // À prévoir : récupérer l'id du hackathon actif depuis la base de données pour éviter les erreurs.
+    try {
+        // Rechercher une inscription existante pour ce hackathon et cette équipe
+        $inscription = Inscrire::where('idhackathon', $idh)
+                                ->where('idequipe', $equipe->idequipe)
+                                ->first();
 
-        // Récupération de l'id du hackathon actif
-        $idh = $request->get('idh');
-        
-        try{
-            // Inscription de l'équipe au hackathon
+        if ($inscription) {
+            // Si l'équipe était déjà inscrite puis désinscrite, mettre à jour l'inscription
+            if ($inscription->dateinscription === null && $inscription->datedesinscription !== null) {
+                $inscription->dateinscription = now();
+                $inscription->datedesinscription = null; // Réinitialiser la date de désinscription
+                $inscription->save();
+            } else {
+                // L'équipe est déjà inscrite activement, redirection avec message
+                return redirect("/me")->withErrors(['errors' => "Vous êtes déjà inscrit à ce hackathon."]);
+            }
+        } else {
+            // Si l'équipe n'a jamais été inscrite, créer une nouvelle inscription
             $inscription = new Inscrire();
             $inscription->idhackathon = $idh;
             $inscription->idequipe = $equipe->idequipe;
-            $inscription->dateinscription = date('Y-m-d H:i:s');
+            $inscription->dateinscription = now();
             $inscription->datedesinscription = null;
             $inscription->save();
-
-            $hackathon = Hackathon::find($idh);
-
-            // TODO : envoyer un email de confirmation à l'équipe en utilisant la classe EmailHelpers, et la méthode sendEmail (exemple présent dans le contrôleur EquipeController)
-            EmailHelpers::sendEmail($equipe->login, "Inscription de votre équipe", "email.join-hackhathon", ['equipe' => $equipe, 'hackathon' => $hackathon ]);
-            // Redirection vers la page de l'équipe
-            return redirect("/me")->with('success', "Inscription réussie, vous faites maintenant partie du hackathon.");
-        } catch (\Exception $e) {
-            // Redirection vers la page d'accueil avec un message d'erreur
-            return redirect("/")->withErrors(['errors' => "Une erreur est survenue lors de l'inscription au hackathon. Vous êtes déjà inscrit à ce hackhathon"]);
         }
+
+        // Récupération du hackathon pour envoyer les informations dans l'email
+        $hackathon = Hackathon::find($idh);
+
+        // Envoyer un email de confirmation à l'équipe
+        EmailHelpers::sendEmail($equipe->login, "Inscription de votre équipe", "email.join-hackhathon", [
+            'equipe' => $equipe,
+            'hackathon' => $hackathon
+        ]);
+
+        // Redirection vers la page de l'équipe avec un message de succès
+        return redirect("/me")->with('success', "Inscription réussie, vous faites maintenant partie du hackathon.");
+        
+    } catch (\Exception $e) {
+        // En cas d'erreur, redirection avec un message d'erreur détaillé
+        return redirect("/")->withErrors(['errors' => "Une erreur est survenue lors de l'inscription au hackathon. Veuillez réessayer."]);
     }
+}
 
     public function quit(Request $request)
     {
@@ -60,6 +79,7 @@ class HackathonController extends Controller
 
         // Récupération de l'id du hackathon à quitter
         $idh = $request->get('idh');
+        $hackathon = Hackathon::find($idh);
 
         try {
             // Vérification de l'inscription de l'équipe au hackathon
@@ -75,7 +95,7 @@ class HackathonController extends Controller
                 $inscription->save();
 
                 // Envoyer un email de confirmation à l'équipe pour l'informer du départ
-                EmailHelpers::sendEmail($equipe->login, "Désinscription de votre équipe", "email.leave-hackathon", ['equipe' => $equipe]);
+                EmailHelpers::sendEmail($equipe->login, "Désinscription de votre équipe", "email.leave-hackathon", ['equipe' => $equipe, 'hackathon' => $hackathon ]);
 
                 // Redirection vers la page de l'équipe avec un message de succès
                 return redirect("/me")->with('success', "Vous avez quitté le hackathon avec succès.");
@@ -84,7 +104,7 @@ class HackathonController extends Controller
             }
         } catch (\Exception $e) {
             // Redirection vers la page d'accueil avec un message d'erreur
-            return redirect("/me")->withErrors(['errors' => "Une erreur est survenue lors de la désinscription du hackathon."]);
+            return redirect("/me")->withErrors(['errors' => "Une erreur est survenue lors de la désinscription du hackathon." . $e->getMessage()]);
         }
     }
 

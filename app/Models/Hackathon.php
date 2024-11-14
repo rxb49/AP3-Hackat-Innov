@@ -32,7 +32,7 @@ class Hackathon extends Model
 
     public function equipes()
     {
-        return $this->belongsToMany(Equipe::class, 'INSCRIRE', 'idhackathon', 'idequipe')->withPivot('dateinscription');
+        return $this->belongsToMany(Equipe::class, 'INSCRIRE', 'idhackathon', 'idequipe')->withPivot('dateinscription', 'datedesinscription');
     }
 
     public function commentaires()

@@ -22,7 +22,7 @@
                         au <?= date_create($hackathon->dateheurefinh)->format("d/m/Y H:i") ?></div>
                     <div><em>Lieu :</em> <?= $hackathon->ville ?></div>
                     <div><em>Organisateur :</em> <?= "{$organisateur->nom} {$organisateur->prenom}" ?></div>
-                    <div v-if="!loading">Équipe inscrite <?= $nbInscrit ?>/<?= $hackathon->nbequipemax ?></div>
+                    <div v-if="!loading">Équipe inscrite 0/<?= $hackathon->nbequipemax ?></div>
                     <div v-if="!loading">Date butoir d'inscription: <?= $hackathon->datebutoir ?></div>
                 </div>
 
@@ -38,7 +38,7 @@
                 @endif
 
                 <div class="d-flex flex-wrap pt-3">
-                @if (date('Y-m-d H:i:s') <= $hackathon->datebutoir && count($hackathon->equipes) < $hackathon->nbequipemax)
+                @if (date('Y-m-d H:i:s') <= $hackathon->datebutoir && $hackathon->equipes->filter(fn($equipe) => $equipe->pivot->dateinscription !== null)->count() < $hackathon->nbequipemax)
                     <a class="btn bg-green m-2 button-home" href="/join?idh=<?= $hackathon->idhackathon ?>">Rejoindre</a>
                     <a class="btn bg-green m-2 button-home" href="{{route('create-team')}}">Créer mon équipe</a>
                 @endif
