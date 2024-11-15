@@ -57,7 +57,7 @@ class AdminController extends Controller
         $equipe = Equipe::paginate(5);
         
         return view('admin.listEquipe', ['equipe' => $equipe]);
-        }
+    }
 
     function download(Request $request){
 
