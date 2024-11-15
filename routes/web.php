@@ -10,6 +10,7 @@ use App\Http\Controllers\EquipeController;
 use App\Http\Middleware\IsEquipeConnected;
 use App\Http\Controllers\HackathonController;
 use App\Http\Controllers\CommentaireController;
+use App\Http\Controllers\JuryController;
 
 include('inc/api.php');
 
@@ -36,6 +37,8 @@ Route::any('/create-team', [EquipeController::class, 'create'])->name('create-te
 Route::any('/modif-team', [EquipeController::class, 'modif'])->name('modif-team');
 Route::get('/adminlogin', [AdminController::class, 'adminLogin'])->name('adminlogin');
 Route::post('/adminlogin', [AdminController::class, 'adminConnect'])->name('adminConnect');
+Route::get('/jurylogin', [JuryController::class, 'juryLogin'])->name('jurylogin');
+Route::post('/jurylogin', [JuryController::class, 'juryConnect'])->name('juryConnect');
 Route::get('/listequipe', [AdminController::class, 'listEquipe'])->name('listequipe');
 Route::get('/download', [AdminController::class, 'download'])->name('download');
 

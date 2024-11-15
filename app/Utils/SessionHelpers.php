@@ -4,6 +4,7 @@ namespace App\Utils;
 
 use App\Models\Administrateur;
 use App\Models\Equipe;
+use App\Models\JURYMEMBRE;
 
 class SessionHelpers
 {
@@ -27,6 +28,13 @@ class SessionHelpers
         session()->save();
     }
 
+    static function juryLogin(JURYMEMBRE $jury): void
+    {
+        session()->put(self::$sessionKey, $jury);
+        session()->put('is_jury', true);
+        session()->save();
+    }
+
     /**
      * Déconnecte une équipe, c'est-à-dire supprime l'équipe de la session
      * @return void
@@ -35,6 +43,7 @@ class SessionHelpers
     {
         session()->forget(self::$sessionKey);
         session()->put('is_admin', false);
+        session()->put('is_jury', false);
         session()->save();
     }
 
@@ -64,6 +73,11 @@ class SessionHelpers
     public static function isAdmin(): bool
     {
         return session()->has('is_admin') && session()->get('is_admin') === true;
+    }
+
+    public static function isJury(): bool
+    {
+        return session()->has('is_jury') && session()->get('is_jury') === true;
     }
     
 

@@ -1,3 +1,4 @@
+@php use App\Utils\SessionHelpers; @endphp
     <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -35,28 +36,6 @@
             <li class="nav-item"><a href="{{ route("about") }}" class="nav-link white-link @if (Route::is('about')) {{'active-link'}} @endif">About</a></li>
             <li class="nav-item"><a href="{{ route("archive") }}" class="nav-link white-link @if (Route::is('archive')) {{'active-link'}} @endif">Archive</a></li>
             <li class="flex-grow-1"></li>
-
-            <?php
-
-use App\Utils\SessionHelpers;
-
- if (!SessionHelpers::isConnected()) { ?>
-            <li class="nav-item"><a href="{{ route("login") }}" class="nav-link white-link @if (Route::is('login')) {{'active-link'}} @endif">Login</a></li>
-            <li class="nav-item"><a href="{{ route("adminlogin") }}" class="nav-link white-link @if (Route::is('adminlogin')) {{'active-link'}} @endif">🔐 Login Admin</a></li>
-            <li class="nav-item"><a href="{{ route("jurylogin") }}" class="nav-link white-link @if (Route::is('jurylogin')) {{'active-link'}} @endif">Login Jury</a></li>
-            <?php } if (!SessionHelpers::isAdmin() && SessionHelpers::isConnected()) { ?>
-                <li class="nav-item"><a href="/me" class="nav-link white-link @if (Route::is('me')) {{'active-link'}} @endif">Mon profil</a></li>
-            <?php } 
-            if (SessionHelpers::isAdmin()) {?>
-            <li class="nav-item"><a href="{{ route("doc-api") }}" class="nav-link white-link @if (Route::is('doc-api')) {{'active-link'}} @endif">🔐 API</a></li>
-            <li class="nav-item"><a href="{{ route("listequipe") }}" class="nav-link white-link @if (Route::is('listequipe')) {{'active-link'}} @endif">Telecharger les données</a></li>
-            <li class="nav-item"><a href="{{ route("logout") }}" class="nav-link white-link @if (Route::is('logout')) {{'active-link'}} @endif">Log Out</a></li>
-            <?php }
-            if (SessionHelpers::isJury()) {?>
-                <li class="nav-item"><a href="{{ route("logout") }}" class="nav-link white-link @if (Route::is('logout')) {{'active-link'}} @endif">Log Out</a></li>
-            <?php } ?>
-            
-
         </ul>
     </header>
 </div>
