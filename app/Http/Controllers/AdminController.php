@@ -11,6 +11,9 @@ use App\Utils\SessionHelpers;
 use App\Models\Administrateur;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use PragmaRX\Google2FA\Google2FA;
+use PragmaRX\Google2FALaravel\Support\Authenticator;
+
 
 
 class AdminController extends Controller
@@ -20,35 +23,69 @@ class AdminController extends Controller
         return view('admin.adminlogin');
     }
 
+    public function generateGoogle2FASecret($admin)
+    {
+        $google2fa = new Google2FA();
+        $admin->google2fa_secret = $google2fa->generateSecretKey();
+        $admin->save();
+
+        return $admin->google2fa_secret;
+    }
+
+    public function showQrCode()
+    {
+        $admin = SessionHelpers::getAdminConnected(); // Récupère l'admin connecté
+        $google2fa = app('pragmarx.google2fa');
+
+        // Génère l'URL du QR Code
+        $qrCodeUrl = $google2fa->getQRCodeInline(
+            'NomApplication',       // Nom de l'application
+            $admin->email,          // Email de l'utilisateur
+            $admin->google2fa_secret // Clé secrète
+        );
+
+        return view('admin.qrcode', ['qrCodeUrl' => $qrCodeUrl]);
+    }
+
+    public function toggleTwoFactor(Request $request)
+    {
+        $admin = SessionHelpers::getAdminConnected();
+
+        if (!$admin->google2fa_secret) {
+            $this->generateGoogle2FASecret($admin);
+            return redirect('/qrcode')->with('success', 'A2F activée. Scannez le QR Code.');
+        } else {
+            $admin->google2fa_secret = null; // Désactiver l'A2F
+            $admin->save();
+            return redirect('/')->with('success', 'A2F désactivée.');
+        }
+    }
+
     public function adminConnect(Request $request)
     {
-        $validated = $request->validate(
-            [
-                'email' => 'required|email',
-                'motpasse' => 'required',
-            ],
-            [
-                'required' => 'Le champ :attribute est obligatoire.',
-                'email' => 'Le champ :attribute doit être une adresse email valide.',
-            ],
-            [
-                'email' => 'email',
-                'motpasse' => 'mot de passe',
-            ]
-        );
-        // Récupération de l'admin avec l'email fourni
+        $validated = $request->validate([
+            'email' => 'required|email',
+            'motpasse' => 'required',
+            'otp' => 'required|digits:6', // Champ obligatoire pour le code OTP
+        ]);
+    
         $admin = Administrateur::where('email', $validated['email'])->first();
-        // Si l'admin n'existe pas, on redirige vers la page de connexion avec un message d'erreur
-        if (!$admin) {
-            return redirect("/adminlogin")->withErrors(['errors' => "Aucun administrateur n'a été trouvée avec cet email."]);
+    
+        // Vérifiez l'email et le mot de passe
+        if (!$admin || !password_verify($validated['motpasse'], $admin->motpasse)) {
+            return redirect("/adminlogin")->withErrors(['errors' => "Email ou mot de passe incorrect."]);
         }
-
-        if (!password_verify($validated['motpasse'], $admin->motpasse)) {
-            return redirect("/adminlogin")->withErrors(['errors' => "Aucun administrateur n'a été trouvée avec cet email."]);
+    
+        // Vérifiez le code OTP avec Google2FA
+        $authenticator = app(Authenticator::class)->boot($request);
+    
+        if (!$authenticator->verifyGoogle2FA($admin->google2fa_secret, $validated['otp'])) {
+            return redirect("/adminlogin")->withErrors(['errors' => "Code de vérification incorrect."]);
         }
+    
         // Connexion de l'admin
         SessionHelpers::adminLogin($admin);
-        // Redirection vers la page d'acceuil
+    
         return redirect("/");
     }
 

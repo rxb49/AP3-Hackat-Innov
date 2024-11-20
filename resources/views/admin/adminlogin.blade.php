@@ -27,6 +27,7 @@
 
         <input type="text" id="login" class="fadeIn second" name="email" placeholder="Email" value="{{ old('email') }}"/>
         <input type="password" id="motpasse" class="fadeIn third" name="motpasse" placeholder="Mot de passe"/>
+        <input type="text" id="otp" class="fadeIn third" name="otp" placeholder="Code de vérification (OTP)">
 
         <input type="submit" class="fadeIn fourth" value="Connexion"/>
     </form>
