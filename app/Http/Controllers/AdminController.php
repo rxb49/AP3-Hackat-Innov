@@ -61,33 +61,83 @@ class AdminController extends Controller
         }
     }
 
+    public function a2fSettings()
+    {
+        $admin = SessionHelpers::getAdminConnected(); // Récupérer l'admin connecté
+        return view('admin.a2f-settings', ['admin' => $admin]);
+    }
+
+    public function toggleA2F(Request $request)
+    {
+        $admin = SessionHelpers::getAdminConnected();
+
+        // Basculer l'état d'activation de l'A2F
+        $admin->is_a2f_enabled = !$admin->is_a2f_enabled;
+        $admin->save();
+
+        $status = $admin->is_a2f_enabled ? 'activée' : 'désactivée';
+
+        return redirect()->route('a2fSettings')->with('status', "L'authentification à deux facteurs a été $status avec succès.");
+    }
+
+
     public function adminConnect(Request $request)
     {
-        $validated = $request->validate([
-            'email' => 'required|email',
-            'motpasse' => 'required',
-            'otp' => 'required|digits:6', // Champ obligatoire pour le code OTP
-        ]);
-    
+        // Validation des champs du formulaire
+        $validated = $request->validate(
+            [
+                'email' => 'required|email',
+                'motpasse' => 'required',
+                'otp' => 'nullable|digits:6' // L'OTP est requis seulement si A2F est activée
+            ],
+            [
+                'required' => 'Le champ :attribute est obligatoire.',
+                'email' => 'Le champ :attribute doit être une adresse email valide.',
+                'digits' => 'Le code OTP doit contenir 6 chiffres.'
+            ],
+            [
+                'email' => 'email',
+                'motpasse' => 'mot de passe',
+                'otp' => 'code OTP'
+            ]
+        );
+
+        // Récupération de l'admin avec l'email fourni
         $admin = Administrateur::where('email', $validated['email'])->first();
-    
-        // Vérifiez l'email et le mot de passe
-        if (!$admin || !password_verify($validated['motpasse'], $admin->motpasse)) {
-            return redirect("/adminlogin")->withErrors(['errors' => "Email ou mot de passe incorrect."]);
+
+        // Si l'admin n'existe pas, retour avec une erreur
+        if (!$admin) {
+            return redirect("/adminlogin")->withErrors(['errors' => "Aucun administrateur n'a été trouvé avec cet email."]);
         }
-    
-        // Vérifiez le code OTP avec Google2FA
-        $authenticator = app(Authenticator::class)->boot($request);
-    
-        if (!$authenticator->verifyGoogle2FA($admin->google2fa_secret, $validated['otp'])) {
-            return redirect("/adminlogin")->withErrors(['errors' => "Code de vérification incorrect."]);
+
+        // Vérification du mot de passe
+        if (!password_verify($validated['motpasse'], $admin->motpasse)) {
+            return redirect("/adminlogin")->withErrors(['errors' => "Le mot de passe est incorrect."]);
         }
-    
-        // Connexion de l'admin
+
+        // Si l'A2F est activée, vérifier le code OTP
+        if ($admin->is_a2f_enabled) {
+            // Vérifier si l'OTP a été soumis
+            if (empty($validated['otp'])) {
+                return redirect("/adminlogin")->withErrors(['errors' => "Le code OTP est requis pour se connecter."]);
+            }
+
+            // Vérification du code OTP
+            $google2fa = app('pragmarx.google2fa');
+            $isOtpValid = $google2fa->verifyKey($admin->google2fa_secret, $validated['otp']);
+
+            if (!$isOtpValid) {
+                return redirect("/adminlogin")->withErrors(['errors' => "Le code OTP est invalide."]);
+            }
+        }
+
+        // Si tout est valide, connecter l'administrateur
         SessionHelpers::adminLogin($admin);
-    
+
+        // Redirection vers la page d'accueil
         return redirect("/");
     }
+
 
     function listEquipe(){
         

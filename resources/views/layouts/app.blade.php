@@ -16,6 +16,9 @@
     <link href="/css/main.css" rel="stylesheet"/>
     <link rel="shortcut icon" href="/img/logo.png">
 
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
     @yield('custom-css', '')
 
     <!-- La balise style présente ici permet d'éviter au plus tôt le « flash » de contenu lié à VueJS -->
@@ -51,6 +54,12 @@ use App\Utils\SessionHelpers;
             <li class="nav-item"><a href="{{ route("doc-api") }}" class="nav-link white-link @if (Route::is('doc-api')) {{'active-link'}} @endif">🔐 API</a></li>
             <li class="nav-item"><a href="{{ route("listequipe") }}" class="nav-link white-link @if (Route::is('listequipe')) {{'active-link'}} @endif">Telecharger les données</a></li>
             <li class="nav-item"><a href="{{ route("logout") }}" class="nav-link white-link @if (Route::is('logout')) {{'active-link'}} @endif">Log Out</a></li>
+            <!-- Icône engrenage pour la page de configuration A2F -->
+            <li class="nav-item">
+                <a href="{{ route('a2fSettings') }}" class="nav-link white-link @if (Route::is('a2fSettings')) {{'active-link'}} @endif" title="Paramètres A2F">
+                    <i class="fa-solid fa-gear"></i>
+                </a>
+            </li>
             <?php }
             if (SessionHelpers::isJury()) {?>
                 <li class="nav-item"><a href="{{ route("logout") }}" class="nav-link white-link @if (Route::is('logout')) {{'active-link'}} @endif">Log Out</a></li>

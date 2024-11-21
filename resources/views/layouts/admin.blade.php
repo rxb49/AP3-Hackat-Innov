@@ -1,5 +1,5 @@
 @php use App\Utils\SessionHelpers; @endphp
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -17,6 +17,9 @@
     <link href="/css/main.css" rel="stylesheet"/>
     <link rel="shortcut icon" href="/img/logo.png">
 
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
     @yield('custom-css', '')
 
     <!-- La balise style présente ici permet d'éviter au plus tôt le « flash » de contenu lié à VueJS -->
@@ -31,16 +34,19 @@
 
 <div class="sticky-top header">
     <header class="d-flex justify-content-center py-3">
-        <ul class="nav nav-pills w-100 d-flex">
+        <ul class="nav nav-pills w-100 d-flex align-items-center">
             <li class="nav-item"><a href="{{ route("home") }}" class="nav-link white-link @if (Route::is('home')) {{'active-link'}} @endif" aria-current="page">Home</a></li>
             <li class="nav-item"><a href="{{ route("about") }}" class="nav-link white-link @if (Route::is('about')) {{'active-link'}} @endif">About</a></li>
             <li class="nav-item"><a href="{{ route("archive") }}" class="nav-link white-link @if (Route::is('archive')) {{'active-link'}} @endif">Archive</a></li>
+            
             <li class="flex-grow-1"></li>
+            
+            
         </ul>
     </header>
 </div>
 
-<!-- Contenu de la page, sera remplacé par le contenu de la page appelée (section('content')) -->
+<!-- Contenu de la page -->
 @yield('content', 'Default content')
 
 </body>

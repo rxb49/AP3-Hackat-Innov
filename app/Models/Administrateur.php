@@ -31,4 +31,23 @@ class Administrateur extends Model
         );
 
     }
+
+    public function enableA2F()
+    {
+        $this->is_a2f_enabled = true;
+        $this->save();
+    }
+
+    // Désactiver l'A2F pour cet utilisateur
+    public function disableA2F()
+    {
+        $this->is_a2f_enabled = false;
+        $this->save();
+    }
+
+    // Vérifier si l'A2F est activée
+    public function isA2FEnabled()
+    {
+        return $this->is_a2f_enabled;
+    }
 }

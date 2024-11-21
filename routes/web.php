@@ -24,6 +24,10 @@ Route::get('/incomingArchive', [HackathonController::class, 'listIncomingHackath
 Route::get('/archiveByEquipe', [HackathonController::class, 'listHackathonByEquipe'])->name('archiveByEquipe');
 Route::get('/archive/commentaire', [HackathonController::class, 'commentaire'])->name('commentaire');
 Route::post('/comment', [CommentaireController::class, 'addCommentaire'])->name('addCommentaire');
+Route::get('/admin/a2f-settings', [AdminController::class, 'a2fSettings'])->name('a2fSettings');
+Route::post('/admin/toggle-a2f', [AdminController::class, 'toggleA2F'])->name('toggleA2F');
+
+
 
 
 
